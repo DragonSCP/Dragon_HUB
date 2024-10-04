@@ -1697,7 +1697,7 @@ spawn(function()
 while wait() do
     for i,v in pairs(game:GetService("Workspace")["_WorldOrigin"]:GetChildren()) do
         pcall(function()
-            if v.Name == ("CurvedRing") or v.Name == ("SlashHit") or v.Name == ("SwordSlash") or v.Name == ("SlashTail") or v.Name == ("Sounds") then
+            if v.Name == ("CurvedRing") or v.Name == ("SlashHit") or v.Name == ("EspadaSlash") or v.Name == ("SlashTail") or v.Name == ("Sounds") then
                 v:Destroy()
             end
         end)
@@ -1705,10 +1705,10 @@ while wait() do
 end
 end)
 
-function Check_Sword(Sword_Name)
+function Check_Espada(Espada_Name)
     for i, v in pairs(game:GetService("ReplicatedStorage").Remotes['CommF_']:InvokeServer("getInventory")) do
-        if (v.Type == "Sword") then
-            if v.Name == Sword_Name then
+        if (v.Type == "Espada") then
+            if v.Name == Espada_Name then
                 return true
             end
         end
@@ -1946,7 +1946,7 @@ task.spawn(function()
 
 spawn(function()
 game:GetService("RunService").Heartbeat:Connect(function()
-    if _G.AutoVampire or AutoFarmChest or _G.AutoAdvanceDungeon or _G.AutoDoughtBoss or _G.Auto_DungeonMobAura or _G.AutoFarmChest or _G.AutoFactory or _G.AutoFarmBossHallow or _G.AutoFarmSwanGlasses or _G.AutoLongSword or _G.AutoBlackSpikeycoat or _G.AutoElectricClaw or _G.AutoFarmGunMastery or _G.AutoHolyTorch or _G.AutoLawRaid or _G.AutoFarmBoss or _G.AutoTwinHooks or _G.AutoOpenSwanDoor or _G.AutoDragon_Trident or _G.AutoSaber or _G.NOCLIP or _G.AutoFarmFruitMastery or _G.AutoFarmGunMastery or _G.TeleportIsland or _G.Auto_EvoRace or _G.AutoFarmAllMsBypassType or _G.AutoObservationv2 or _G.AutoMusketeerHat or _G.AutoEctoplasm or _G.AutoRengoku or _G.Auto_Rainbow_Haki or _G.AutoObservation or _G.AutoDarkDagger or _G.Safe_Mode or _G.MasteryFruit or _G.AutoBudySword or _G.AutoOderSword or _G.AutoBounty or _G.AutoAllBoss or _G.Auto_Bounty or _G.AutoSharkman or _G.Auto_Mastery_Fruit or _G.Auto_Mastery_Gun or _G.Auto_Dungeon or _G.Auto_Cavender or _G.Auto_Pole or _G.Auto_Kill_Ply or _G.Auto_Factory or _G.AutoSecondSea or _G.TeleportPly or _G.AutoBartilo or _G.Auto_DarkBoss or _G.GrabChest or _G.AutoFarmBounty or _G.Holy_Torch or _G.AutoFarm or _G.Clip or _G.AutoElitehunter or _G.AutoThirdSea or _G.Auto_Bone or _G.Autoheart or _G.Autodoughking or _G.AutoFarmMaterial or _G.AutoNevaSoulGuitar or _G.Auto_Dragon_Trident or _G.Autotushita or _G.d or _G.Autowaden or _G.Autogay or _G.Autopole or _G.Autosaw or _G.AutoObservationHakiV2 or _G.AutoFarmNearest or AutoFarmChest or _G.AutoCarvender or _G.AutoTwinHook or AutoMobAura or _G.Tweenfruit or _G.AutoKai or _G.TeleportNPC or _G.Leather or _G.Auto_Wing or _G.Umm or _G.Makori_gay or Radioactive or Fish or Gunpowder or Dragon_Scale or Cocoafarm or Scrap or MiniHee or _G.AutoFarmSeabaest or Auto_Cursed_Dual_Katana or _G.AutoFarmMob or _G.AutoMysticIsland or _G.AutoFarmDungeon or _G.AutoRaidPirate or _G.AutoQuestRace or _G.TweenMGear or getgenv().AutoFarm or _G.AutoPlayerHunter or _G.AutoFactory or Grab_Chest or _G.Namfon or _G.AutoSwordMastery or _G.AutoSeaBest or _G.AutoKillTial or _G.Auto_Saber or _G.Position_Spawn or _G.Farmfast or _G.AutoRace or _G.RaidPirate then
+    if _G.AutoVampire or AutoFarmChest or _G.AutoAdvanceDungeon or _G.AutoDoughtBoss or _G.Auto_DungeonMobAura or _G.AutoFarmChest or _G.AutoFactory or _G.AutoFarmBossHallow or _G.AutoFarmSwanGlasses or _G.AutoLongEspada or _G.AutoBlackSpikeycoat or _G.AutoElectricClaw or _G.AutoFarmArmaMastery or _G.AutoHolyTorch or _G.AutoLawRaid or _G.AutoFarmBoss or _G.AutoTwinHooks or _G.AutoOpenSwanDoor or _G.AutoDragon_Trident or _G.AutoSaber or _G.NOCLIP or _G.AutoFarmFruitMastery or _G.AutoFarmArmaMastery or _G.TeleportIsland or _G.Auto_EvoRace or _G.AutoFarmAllMsBypassType or _G.AutoObservationv2 or _G.AutoMusketeerHat or _G.AutoEctoplasm or _G.AutoRengoku or _G.Auto_Rainbow_Haki or _G.AutoObservation or _G.AutoDarkDagger or _G.Safe_Mode or _G.MasteryFruit or _G.AutoBudyEspada or _G.AutoOderEspada or _G.AutoBounty or _G.AutoAllBoss or _G.Auto_Bounty or _G.AutoSharkman or _G.Auto_Mastery_Fruit or _G.Auto_Mastery_Arma or _G.Auto_Dungeon or _G.Auto_Cavender or _G.Auto_Pole or _G.Auto_Kill_Ply or _G.Auto_Factory or _G.AutoSecondSea or _G.TeleportPly or _G.AutoBartilo or _G.Auto_DarkBoss or _G.GrabChest or _G.AutoFarmBounty or _G.Holy_Torch or _G.AutoFarm or _G.Clip or _G.AutoElitehunter or _G.AutoThirdSea or _G.Auto_Bone or _G.Autoheart or _G.Autodoughking or _G.AutoFarmMaterial or _G.AutoNevaSoulGuitar or _G.Auto_Dragon_Trident or _G.Autotushita or _G.d or _G.Autowaden or _G.Autogay or _G.Autopole or _G.Autosaw or _G.AutoObservationHakiV2 or _G.AutoFarmNearest or AutoFarmChest or _G.AutoCarvender or _G.AutoTwinHook or AutoMobAura or _G.Tweenfruit or _G.AutoKai or _G.TeleportNPC or _G.Leather or _G.Auto_Wing or _G.Umm or _G.Makori_gay or Radioactive or Fish or Armapowder or Dragon_Scale or Cocoafarm or Scrap or MiniHee or _G.AutoFarmSeabaest or Auto_Cursed_Dual_Katana or _G.AutoFarmMob or _G.AutoMysticIsland or _G.AutoFarmDungeon or _G.AutoRaidPirate or _G.AutoQuestRace or _G.TweenMGear or getgenv().AutoFarm or _G.AutoPlayerHunter or _G.AutoFactory or Grab_Chest or _G.Namfon or _G.AutoEspadaMastery or _G.AutoSeaBest or _G.AutoKillTial or _G.Auto_Saber or _G.Position_Spawn or _G.Farmfast or _G.AutoRace or _G.RaidPirate then
         if not game:GetService("Workspace"):FindFirstChild("LOL") then
             local LOL = Instance.new("Part")
             LOL.Name = "LOL"
@@ -1968,7 +1968,7 @@ end)
 spawn(function()
     pcall(function()
         while wait() do
-            if _G.AutoVampire or AutoFarmChest or _G.AutoAdvanceDungeon or _G.AutoDoughtBoss or _G.Auto_DungeonMobAura or _G.AutoFarmChest or _G.AutoFactory or _G.AutoFarmBossHallow or _G.AutoFarmSwanGlasses or _G.AutoLongSword or _G.AutoBlackSpikeycoat or _G.AutoElectricClaw or _G.AutoFarmGunMastery or _G.AutoHolyTorch or _G.AutoLawRaid or _G.AutoFarmBoss or _G.AutoTwinHooks or _G.AutoOpenSwanDoor or _G.AutoDragon_Trident or _G.AutoSaber or _G.AutoFarmFruitMastery or _G.AutoFarmGunMastery or _G.TeleportIsland or _G.Auto_EvoRace or _G.AutoFarmAllMsBypassType or _G.AutoObservationv2 or _G.AutoMusketeerHat or _G.AutoEctoplasm or _G.AutoRengoku or _G.Auto_Rainbow_Haki or _G.AutoObservation or _G.AutoDarkDagger or _G.Safe_Mode or _G.MasteryFruit or _G.AutoBudySword or _G.AutoOderSword or _G.AutoBounty or _G.AutoAllBoss or _G.Auto_Bounty or _G.AutoSharkman or _G.Auto_Mastery_Fruit or _G.Auto_Mastery_Gun or _G.Auto_Dungeon or _G.Auto_Cavender or _G.Auto_Pole or _G.Auto_Kill_Ply or _G.Auto_Factory or _G.AutoSecondSea or _G.TeleportPly or _G.AutoBartilo or _G.Auto_DarkBoss or _G.GrabChest or _G.AutoFarmBounty or _G.Holy_Torch or _G.AutoFarm or _G.Clip or FarmBoss or _G.AutoElitehunter or _G.AutoThirdSea or _G.Auto_Bone or _G.Autoheart or _G.Autodoughking or _G.AutoFarmMaterial or _G.AutoNevaSoulGuitar or _G.Auto_Dragon_Trident or _G.Autotushita or _G.d or _G.Autowaden or _G.Autogay or _G.Autopole or _G.Autosaw or _G.AutoObservationHakiV2 or _G.AutoFarmNearest or AutoFarmChest or _G.AutoCarvender or _G.AutoTwinHook or AutoMobAura or _G.Tweenfruit or _G.TeleportNPC or _G.Leather or _G.Auto_Wing or _G.Umm or _G.Makori_gay or Radioactive or Fish or Gunpowder or Dragon_Scale or Cocoafarm or Scrap or MiniHee or _G.AutoFarmSeabaest or Auto_Cursed_Dual_Katana or _G.AutoFarmMob or _G.AutoMysticIsland or _G.AutoFarmDungeon or _G.AutoRaidPirate or _G.AutoQuestRace or _G.TweenMGear or getgenv().AutoFarm or _G.AutoPlayerHunter or _G.AutoFactory or Grab_Chest or _G.Namfon or _G.AutoSwordMastery or _G.Auto_Seabest or _G.AutoSeaBest or _G.AutoKillTial or _G.Auto_Saber or _G.Position_Spawn or _G.Farmfast or _G.AutoRace or _G.RaidPirate == true then
+            if _G.AutoVampire or AutoFarmChest or _G.AutoAdvanceDungeon or _G.AutoDoughtBoss or _G.Auto_DungeonMobAura or _G.AutoFarmChest or _G.AutoFactory or _G.AutoFarmBossHallow or _G.AutoFarmSwanGlasses or _G.AutoLongEspada or _G.AutoBlackSpikeycoat or _G.AutoElectricClaw or _G.AutoFarmArmaMastery or _G.AutoHolyTorch or _G.AutoLawRaid or _G.AutoFarmBoss or _G.AutoTwinHooks or _G.AutoOpenSwanDoor or _G.AutoDragon_Trident or _G.AutoSaber or _G.AutoFarmFruitMastery or _G.AutoFarmArmaMastery or _G.TeleportIsland or _G.Auto_EvoRace or _G.AutoFarmAllMsBypassType or _G.AutoObservationv2 or _G.AutoMusketeerHat or _G.AutoEctoplasm or _G.AutoRengoku or _G.Auto_Rainbow_Haki or _G.AutoObservation or _G.AutoDarkDagger or _G.Safe_Mode or _G.MasteryFruit or _G.AutoBudyEspada or _G.AutoOderEspada or _G.AutoBounty or _G.AutoAllBoss or _G.Auto_Bounty or _G.AutoSharkman or _G.Auto_Mastery_Fruit or _G.Auto_Mastery_Arma or _G.Auto_Dungeon or _G.Auto_Cavender or _G.Auto_Pole or _G.Auto_Kill_Ply or _G.Auto_Factory or _G.AutoSecondSea or _G.TeleportPly or _G.AutoBartilo or _G.Auto_DarkBoss or _G.GrabChest or _G.AutoFarmBounty or _G.Holy_Torch or _G.AutoFarm or _G.Clip or FarmBoss or _G.AutoElitehunter or _G.AutoThirdSea or _G.Auto_Bone or _G.Autoheart or _G.Autodoughking or _G.AutoFarmMaterial or _G.AutoNevaSoulGuitar or _G.Auto_Dragon_Trident or _G.Autotushita or _G.d or _G.Autowaden or _G.Autogay or _G.Autopole or _G.Autosaw or _G.AutoObservationHakiV2 or _G.AutoFarmNearest or AutoFarmChest or _G.AutoCarvender or _G.AutoTwinHook or AutoMobAura or _G.Tweenfruit or _G.TeleportNPC or _G.Leather or _G.Auto_Wing or _G.Umm or _G.Makori_gay or Radioactive or Fish or Armapowder or Dragon_Scale or Cocoafarm or Scrap or MiniHee or _G.AutoFarmSeabaest or Auto_Cursed_Dual_Katana or _G.AutoFarmMob or _G.AutoMysticIsland or _G.AutoFarmDungeon or _G.AutoRaidPirate or _G.AutoQuestRace or _G.TweenMGear or getgenv().AutoFarm or _G.AutoPlayerHunter or _G.AutoFactory or Grab_Chest or _G.Namfon or _G.AutoEspadaMastery or _G.Auto_Seabest or _G.AutoSeaBest or _G.AutoKillTial or _G.Auto_Saber or _G.Position_Spawn or _G.Farmfast or _G.AutoRace or _G.RaidPirate == true then
                 if not game:GetService("Players").LocalPlayer.Character.HumanoidRootPart:FindFirstChild("BodyClip") then
                     local Noclip = Instance.new("BodyVelocity")
                     Noclip.Name = "BodyClip"
@@ -1984,7 +1984,7 @@ end)
 spawn(function()
     pcall(function()
         game:GetService("RunService").Stepped:Connect(function()
-            if _G.AutoVampire or AutoFarmChest or _G.AutoAdvanceDungeon or _G.AutoDoughtBoss or _G.Auto_DungeonMobAura or _G.AutoFarmChest or _G.AutoFactory or _G.AutoFarmBossHallow or _G.AutoFarmSwanGlasses or _G.AutoLongSword or _G.AutoBlackSpikeycoat or _G.AutoElectricClaw or _G.AutoFarmGunMastery or _G.AutoHolyTorch or _G.AutoLawRaid or _G.AutoFarmBoss or _G.AutoTwinHooks or _G.AutoOpenSwanDoor or _G.AutoDragon_Trident or _G.AutoSaber or _G.NOCLIP or _G.AutoFarmFruitMastery or _G.AutoFarmGunMastery or _G.TeleportIsland or _G.Auto_EvoRace or _G.AutoFarmAllMsBypassType or _G.AutoObservationv2 or _G.AutoMusketeerHat or _G.AutoEctoplasm or _G.AutoRengoku or _G.Auto_Rainbow_Haki or _G.AutoObservation or _G.AutoDarkDagger or _G.Safe_Mode or _G.MasteryFruit or _G.AutoBudySword or _G.AutoOderSword or _G.AutoBounty or _G.AutoAllBoss or _G.Auto_Bounty or _G.AutoSharkman or _G.Auto_Mastery_Fruit or _G.Auto_Mastery_Gun or _G.Auto_Dungeon or _G.Auto_Cavender or _G.Auto_Pole or _G.Auto_Kill_Ply or _G.Auto_Factory or _G.AutoSecondSea or _G.TeleportPly or _G.AutoBartilo or _G.Auto_DarkBoss or _G.GrabChest or _G.AutoFarmBounty or _G.Holy_Torch or _G.AutoFarm or _G.Clip or _G.AutoElitehunter or _G.AutoThirdSea or _G.Auto_Bone or _G.Autoheart or _G.Autodoughking or _G.AutoFarmMaterial or _G.AutoNevaSoulGuitar or _G.Auto_Dragon_Trident or _G.Autotushita or _G.Autowaden or _G.Autogay or _G.Autopole or _G.Autosaw or _G.AutoObservationHakiV2 or _G.AutoFarmNearest or _G.AutoCarvender or _G.AutoTwinHook or AutoMobAura or _G.Tweenfruit or _G.TeleportNPC or _G.AutoKai or _G.Leather or _G.Auto_Wing or _G.Umm or _G.Makori_gay or Radioactive or Fish or Gunpowder or Dragon_Scale or Cocoafarm or Scrap or MiniHee or _G.AutoFarmSeabaest or Auto_Cursed_Dual_Katana or _G.AutoFarmMob or _G.AutoMysticIsland or _G.AutoFarmDungeon or _G.AutoRaidPirate or _G.AutoQuestRace or _G.TweenMGear or getgenv().AutoFarm or _G.AutoPlayerHunter or _G.AutoFactory or _G.Namfon or _G.AutoSwordMastery or _G.Auto_Seabest or _G.AutoSeaBest or _G.AutoKillTial or _G.Auto_Saber or _G.Position_Spawn or _G.TPB or _G.Farmfast or _G.AutoRace or _G.RaidPirate == true then
+            if _G.AutoVampire or AutoFarmChest or _G.AutoAdvanceDungeon or _G.AutoDoughtBoss or _G.Auto_DungeonMobAura or _G.AutoFarmChest or _G.AutoFactory or _G.AutoFarmBossHallow or _G.AutoFarmSwanGlasses or _G.AutoLongEspada or _G.AutoBlackSpikeycoat or _G.AutoElectricClaw or _G.AutoFarmArmaMastery or _G.AutoHolyTorch or _G.AutoLawRaid or _G.AutoFarmBoss or _G.AutoTwinHooks or _G.AutoOpenSwanDoor or _G.AutoDragon_Trident or _G.AutoSaber or _G.NOCLIP or _G.AutoFarmFruitMastery or _G.AutoFarmArmaMastery or _G.TeleportIsland or _G.Auto_EvoRace or _G.AutoFarmAllMsBypassType or _G.AutoObservationv2 or _G.AutoMusketeerHat or _G.AutoEctoplasm or _G.AutoRengoku or _G.Auto_Rainbow_Haki or _G.AutoObservation or _G.AutoDarkDagger or _G.Safe_Mode or _G.MasteryFruit or _G.AutoBudyEspada or _G.AutoOderEspada or _G.AutoBounty or _G.AutoAllBoss or _G.Auto_Bounty or _G.AutoSharkman or _G.Auto_Mastery_Fruit or _G.Auto_Mastery_Arma or _G.Auto_Dungeon or _G.Auto_Cavender or _G.Auto_Pole or _G.Auto_Kill_Ply or _G.Auto_Factory or _G.AutoSecondSea or _G.TeleportPly or _G.AutoBartilo or _G.Auto_DarkBoss or _G.GrabChest or _G.AutoFarmBounty or _G.Holy_Torch or _G.AutoFarm or _G.Clip or _G.AutoElitehunter or _G.AutoThirdSea or _G.Auto_Bone or _G.Autoheart or _G.Autodoughking or _G.AutoFarmMaterial or _G.AutoNevaSoulGuitar or _G.Auto_Dragon_Trident or _G.Autotushita or _G.Autowaden or _G.Autogay or _G.Autopole or _G.Autosaw or _G.AutoObservationHakiV2 or _G.AutoFarmNearest or _G.AutoCarvender or _G.AutoTwinHook or AutoMobAura or _G.Tweenfruit or _G.TeleportNPC or _G.AutoKai or _G.Leather or _G.Auto_Wing or _G.Umm or _G.Makori_gay or Radioactive or Fish or Armapowder or Dragon_Scale or Cocoafarm or Scrap or MiniHee or _G.AutoFarmSeabaest or Auto_Cursed_Dual_Katana or _G.AutoFarmMob or _G.AutoMysticIsland or _G.AutoFarmDungeon or _G.AutoRaidPirate or _G.AutoQuestRace or _G.TweenMGear or getgenv().AutoFarm or _G.AutoPlayerHunter or _G.AutoFactory or _G.Namfon or _G.AutoEspadaMastery or _G.Auto_Seabest or _G.AutoSeaBest or _G.AutoKillTial or _G.Auto_Saber or _G.Position_Spawn or _G.TPB or _G.Farmfast or _G.AutoRace or _G.RaidPirate == true then
                 for _, v in pairs(game:GetService("Players").LocalPlayer.Character:GetDescendants()) do
                     if v:IsA("BasePart") then
                         v.CanCollide = false    
@@ -2005,7 +2005,7 @@ end
 
 spawn(function()
     while wait() do
-        if _G.AutoDoughtBoss or _G.Auto_DungeonMobAura or _G.AutoFarmChest or _G.AutoFarmBossHallow or _G.AutoFactory or _G.AutoFarmSwanGlasses or _G.AutoLongSword or _G.AutoBlackSpikeycoat or _G.AutoElectricClaw or _G.AutoFarmGunMastery or _G.AutoHolyTorch or _G.AutoLawRaid or _G.AutoFarmBoss or _G.AutoTwinHooks or _G.AutoOpenSwanDoor or _G.AutoDragon_Trident or _G.AutoSaber or _G.NOCLIP or _G.AutoFarmFruitMastery or _G.AutoFarmGunMastery or _G.TeleportIsland or _G.Auto_EvoRace or _G.AutoFarmAllMsBypassType or _G.AutoObservationv2 or _G.AutoMusketeerHat or _G.AutoEctoplasm or _G.AutoRengoku or _G.Auto_Rainbow_Haki or _G.AutoObservation or _G.AutoDarkDagger or _G.Safe_Mode or _G.MasteryFruit or _G.AutoBudySword or _G.AutoOderSword or _G.AutoAllBoss or _G.Auto_Bounty or _G.AutoSharkman or _G.Auto_Mastery_Fruit or _G.Auto_Mastery_Gun or _G.Auto_Dungeon or _G.Auto_Cavender or _G.Auto_Pole or _G.Auto_Kill_Ply or _G.Auto_Factory or _G.AutoSecondSea or _G.TeleportPly or _G.AutoBartilo or _G.Auto_DarkBoss or _G.AutoFarm or _G.Clip or _G.AutoElitehunter or _G.AutoThirdSea or _G.Auto_Bone or _G.Autoheart or _G.Autodoughking or _G.d or _G.Autowaden or _G.Autogay or _G.AutoObservationHakiV2 or _G.AutoFarmMaterial or _G.AutoFarmNearest or _G.AutoCarvender or _G.AutoTwinHook or AutoMobAura or _G.Leather or _G.Auto_Wing or _G.Umm or _G.Makori_gay or Radioactive or Fish or Gunpowder or Dragon_Scale or Cocoafarm or Scrap or MiniHee or _G.AutoFarmSeabaest or Auto_Cursed_Dual_Katana or _G.AutoFarmMob or _G.AutoRaidPirate or getgenv().AutoFarm or _G.AutoPlayerHunter or _G.AutoFactory or _G.AttackDummy or _G.AutoSwordMastery or _G.Auto_Seabest or _G.AutoSeaBest or _G.AutoKillTial or _G.Auto_Saber or _G.Farmfast or _G.RaidPirate == true then
+        if _G.AutoDoughtBoss or _G.Auto_DungeonMobAura or _G.AutoFarmChest or _G.AutoFarmBossHallow or _G.AutoFactory or _G.AutoFarmSwanGlasses or _G.AutoLongEspada or _G.AutoBlackSpikeycoat or _G.AutoElectricClaw or _G.AutoFarmArmaMastery or _G.AutoHolyTorch or _G.AutoLawRaid or _G.AutoFarmBoss or _G.AutoTwinHooks or _G.AutoOpenSwanDoor or _G.AutoDragon_Trident or _G.AutoSaber or _G.NOCLIP or _G.AutoFarmFruitMastery or _G.AutoFarmArmaMastery or _G.TeleportIsland or _G.Auto_EvoRace or _G.AutoFarmAllMsBypassType or _G.AutoObservationv2 or _G.AutoMusketeerHat or _G.AutoEctoplasm or _G.AutoRengoku or _G.Auto_Rainbow_Haki or _G.AutoObservation or _G.AutoDarkDagger or _G.Safe_Mode or _G.MasteryFruit or _G.AutoBudyEspada or _G.AutoOderEspada or _G.AutoAllBoss or _G.Auto_Bounty or _G.AutoSharkman or _G.Auto_Mastery_Fruit or _G.Auto_Mastery_Arma or _G.Auto_Dungeon or _G.Auto_Cavender or _G.Auto_Pole or _G.Auto_Kill_Ply or _G.Auto_Factory or _G.AutoSecondSea or _G.TeleportPly or _G.AutoBartilo or _G.Auto_DarkBoss or _G.AutoFarm or _G.Clip or _G.AutoElitehunter or _G.AutoThirdSea or _G.Auto_Bone or _G.Autoheart or _G.Autodoughking or _G.d or _G.Autowaden or _G.Autogay or _G.AutoObservationHakiV2 or _G.AutoFarmMaterial or _G.AutoFarmNearest or _G.AutoCarvender or _G.AutoTwinHook or AutoMobAura or _G.Leather or _G.Auto_Wing or _G.Umm or _G.Makori_gay or Radioactive or Fish or Armapowder or Dragon_Scale or Cocoafarm or Scrap or MiniHee or _G.AutoFarmSeabaest or Auto_Cursed_Dual_Katana or _G.AutoFarmMob or _G.AutoRaidPirate or getgenv().AutoFarm or _G.AutoPlayerHunter or _G.AutoFactory or _G.AttackDummy or _G.AutoEspadaMastery or _G.Auto_Seabest or _G.AutoSeaBest or _G.AutoKillTial or _G.Auto_Saber or _G.Farmfast or _G.RaidPirate == true then
             pcall(function()
                 game:GetService("ReplicatedStorage").Remotes.CommE:FireServer("Ken",true)
             end)
@@ -2044,7 +2044,7 @@ spawn(function()
             for i,v in pairs(game:GetService("Players").LocalPlayer.Backpack:GetChildren()) do  
                 if v:IsA("Tool") then
                     if v:FindFirstChild("RemoteFunctionShoot") then 
-                        SelectWeaponGun = v.Name
+                        SelectWeaponArma = v.Name
                     end
                 end
             end
@@ -2509,7 +2509,7 @@ CamShake:Stop()
         return "Remaining " .. 10 - v228 .. " training sessions."
     end
 
-local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/shlexware/Orion/main/source')))()
+local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/DragonSCP/dragonscript/refs/heads/main/hub')))()
 local Window = OrionLib:MakeWindow({Name = "Dragon HUB", HidePremium = false, IntroText = "", SaveConfig = true, ConfigFolder = "Dragon HUB"})
 
 OrionLib:MakeNotification({
@@ -2736,8 +2736,8 @@ local locallv = W:AddLabel("Level")
     })
     local StastMelee = W:AddLabel("")
     local StastDefense = W:AddLabel("")
-    local StastSword = W:AddLabel("")
-    local StastGun = W:AddLabel("")
+    local StastEspada = W:AddLabel("")
+    local StastArma = W:AddLabel("")
     local StastDevilFruit = W:AddLabel("")
     local PointsStast = W:AddLabel("")
     local Section = W:AddSection({
@@ -2749,7 +2749,7 @@ local locallv = W:AddLabel("Level")
     local  DragonTalon =             W:AddLabel("❌ : Dragon Talon")
     local   GodHuman =            W:AddLabel("❌ : God Human")
     local Section = W:AddSection({
-        Name = "Sword Legend Check"
+        Name = "Espada Legend Check"
     })
     local   Shisui =            W:AddLabel("❌ : Shisui")
     local     Saddi =           W:AddLabel("❌ : Saddi")
@@ -2769,7 +2769,7 @@ local locallv = W:AddLabel("Level")
         Name = "World 3 Weapon"
     })
     local     Yama =          W:AddLabel("❌ : Yama")
-    local        BuddySword =        W:AddLabel("❌ : Buddy Sword")
+    local        BuddyEspada =        W:AddLabel("❌ : Buddy Espada")
     local       Canvander =        W:AddLabel("❌ : Canvander")
     local      TwinHooks =         W:AddLabel("❌ : Twin Hooks")
     local     SpikeyTrident =          W:AddLabel("❌ : Spikey Trident")
@@ -2777,7 +2777,7 @@ local locallv = W:AddLabel("Level")
     local     DarkDagger =           W:AddLabel("❌ : Dark Dagger")
     local     Tushita          W:AddLabel("❌ : Tushita")
     local Section = W:AddSection({
-        Name = "Gun"
+        Name = "Arma"
     })
     local   Kabucha =            W:AddLabel("❌ : Kabucha")
     local   AcidumRifle =             W:AddLabel("❌ : Acidum Rifle")
@@ -2832,7 +2832,7 @@ local Section = M:AddSection({
 
 M:AddParagraph("Select Weapon","Please Select Weapon")
 
-local WeaponList = {"Melee","Sword","Fruit","Gun"}
+local WeaponList = {"Melee","Espada","Fruit","Arma"}
 _G.SelectWeapon = "Melee"
 M:AddDropdown({
     Name = "Select Weapon",
@@ -2855,17 +2855,17 @@ task.spawn(function()
                         end
                     end
                 end
-            elseif _G.SelectWeapon == "Sword" then
+            elseif _G.SelectWeapon == "Espada" then
                 for i ,v in pairs(game.Players.LocalPlayer.Backpack:GetChildren()) do
-                    if v.ToolTip == "Sword" then
+                    if v.ToolTip == "Espada" then
                         if game.Players.LocalPlayer.Backpack:FindFirstChild(tostring(v.Name)) then
                             _G.SelectWeapon = v.Name
                         end
                     end
                 end
-            elseif _G.SelectWeapon == "Gun" then
+            elseif _G.SelectWeapon == "Arma" then
                 for i ,v in pairs(game.Players.LocalPlayer.Backpack:GetChildren()) do
-                    if v.ToolTip == "Gun" then
+                    if v.ToolTip == "Arma" then
                         if game.Players.LocalPlayer.Backpack:FindFirstChild(tostring(v.Name)) then
                             _G.SelectWeapon = v.Name
                         end
@@ -3029,13 +3029,13 @@ M:AddToggle({
 })
 
 M:AddToggle({
-    Name = "Auto Farm Gun Mastery",
+    Name = "Auto Farm Arma Mastery",
     Default = false,
-    Flag = "Gun Mastery",
+    Flag = "Arma Mastery",
     Save = true,
     Callback = function(Value)
-        _G.AutoFarmGunMastery = Value
-        StopTween(_G.AutoFarmGunMastery)
+        _G.AutoFarmArmaMastery = Value
+        StopTween(_G.AutoFarmArmaMastery)
     end    
 })
 
@@ -3331,7 +3331,7 @@ M:AddToggle({
        _G.Auto_Saber = Value
        _G.AutoSuperhuman = Value
        _G.AutoBartilo = Value
-       _G.AutoBuyLegendarySword = Value
+       _G.AutoBuyLegendaryEspada = Value
        _G.BuyAllAib = Value
        StopTween(_G.AutoFarm)
        StopTween(_G.Hunter)
@@ -3939,32 +3939,32 @@ IQ:AddToggle({
 })
 
 IQ:AddToggle({
-    Name = "Auto Buy Legend Sword",
+    Name = "Auto Buy Legend Espada",
     Default = false,
     Flag = "Auto Legend",
     Save = true,
     Callback = function(Value)
-        _G.AutoBuyLegendarySword = Value
+        _G.AutoBuyLegendaryEspada = Value
     end    
 })
 
 local Section = IQ:AddSection({
-    Name = "Buddy Sword"
+    Name = "Buddy Espada"
 })
 
 IQ:AddToggle({
-    Name = "Auto Buddy Sword",
+    Name = "Auto Buddy Espada",
     Default = false,
     Flag = "Auto Buddy",
     Save = true,
     Callback = function(Value)
-        _G.AutoBudySword = Value
-        StopTween(_G.AutoBudySword)
+        _G.AutoBudyEspada = Value
+        StopTween(_G.AutoBudyEspada)
     end    
 })
 
 IQ:AddToggle({
-    Name = "Auto Buddy Sword[HOP]",
+    Name = "Auto Buddy Espada[HOP]",
     Default = false,
     Flag = "Auto Buddy[HOP]",
     Save = true,
@@ -4371,8 +4371,8 @@ Fruit = S:AddLabel("Fruit")
     
 local Melee = S:AddLabel("Melee : ")
 local Defense = S:AddLabel("Defense : ")
-local Sword = S:AddLabel("Sword : ")
-local Gun = S:AddLabel("Gun : ")
+local Espada = S:AddLabel("Espada : ")
+local Arma = S:AddLabel("Arma : ")
 local Fruit = S:AddLabel("Fruit : ")
 
     spawn(function()
@@ -4394,7 +4394,7 @@ local Fruit = S:AddLabel("Fruit : ")
     spawn(function()
         while wait() do
             pcall(function()
-                Sword:Set("Sword : "..game.Players.localPlayer.Data.Stats.Sword.Level.Value)
+                Espada:Set("Espada : "..game.Players.localPlayer.Data.Stats.Espada.Level.Value)
             end)
         end
     end)
@@ -4402,7 +4402,7 @@ local Fruit = S:AddLabel("Fruit : ")
     spawn(function()
         while wait() do
             pcall(function()
-                Gun:Set("Gun : "..game.Players.localPlayer.Data.Stats.Gun.Level.Value)
+                Arma:Set("Arma : "..game.Players.localPlayer.Data.Stats.Arma.Level.Value)
             end)
         end
     end)
@@ -4446,22 +4446,22 @@ S:AddToggle({
 })
 
 S:AddToggle({
-    Name = "Sword",
+    Name = "Espada",
     Default = false,
-    Flag = "Auto Sword",
+    Flag = "Auto Espada",
     Save = true,
     Callback = function(Value)
-        sword = Value
+        Espada = Value
     end    
 })
 
 S:AddToggle({
-    Name = "Gun",
+    Name = "Arma",
     Default = false,
-    Flag = "Auto Gun",
+    Flag = "Auto Arma",
     Save = true,
     Callback = function(Value)
-        gun = Value
+        Arma = Value
     end    
 })
 
@@ -5343,7 +5343,7 @@ LC:AddToggle({
     Name = "AimBot",
     Default = false,
     Callback = function(Value)
-        _G.Aimbot_Gun = Value
+        _G.Aimbot_Arma = Value
         _G.Aimbot_Skill = Value
 
     end    
@@ -6262,7 +6262,7 @@ SH:AddButton({
 })
 
 local Section = SH:AddSection({
-    Name = "Gun"
+    Name = "Arma"
 })
 
 SH:AddButton({
@@ -6967,14 +6967,14 @@ end)
 spawn(function()
     pcall(function()
         while wait() do
-            if _G.AutoFarmGunMastery then
+            if _G.AutoFarmArmaMastery then
                 local QuestTitle = game:GetService("Players").LocalPlayer.PlayerGui.Main.Quest.Container.QuestTitle.Title.Text
                 if not string.find(QuestTitle, NameMon) then
                     Magnet = false                                      
                     game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("AbandonQuest")
                 end
                 if game:GetService("Players").LocalPlayer.PlayerGui.Main.Quest.Visible == false then
-                    StartMasteryGunMagnet = false
+                    StartMasteryArmaMagnet = false
                     CheckQuest()
                     TP1(CFrameQuest)
                     if (CFrameQuest.Position - game:GetService("Players").LocalPlayer.Character.HumanoidRootPart.Position).Magnitude <= 10 then
@@ -6991,7 +6991,7 @@ spawn(function()
                                         if string.find(game:GetService("Players").LocalPlayer.PlayerGui.Main.Quest.Container.QuestTitle.Title.Text, NameMon) then
                                             HealthMin = v.Humanoid.MaxHealth * _G.Kill_At/100
                                             if v.Humanoid.Health <= HealthMin then                                                
-                                                EquipWeapon(SelectWeaponGun)
+                                                EquipWeapon(SelectWeaponArma)
                                                 TP1(v.HumanoidRootPart.CFrame * CFrame.new(0,10,0))
                                                 v.Humanoid.WalkSpeed = 0
                                                 v.HumanoidRootPart.CanCollide = false
@@ -7001,7 +7001,7 @@ spawn(function()
                                                     [1] = v.HumanoidRootPart.Position,
                                                     [2] = v.HumanoidRootPart
                                                 }
-                                                game:GetService("Players").LocalPlayer.Character[SelectWeaponGun].RemoteFunctionShoot:InvokeServer(unpack(args))
+                                                game:GetService("Players").LocalPlayer.Character[SelectWeaponArma].RemoteFunctionShoot:InvokeServer(unpack(args))
                                             else
                                                 AutoHaki()
                                                 EquipWeapon(_G.SelectWeapon)
@@ -7013,14 +7013,14 @@ spawn(function()
                                                 game:GetService'VirtualUser':CaptureController()
                                                 game:GetService'VirtualUser':Button1Down(Vector2.new(1280, 672))
                                             end
-                                            StartMasteryGunMagnet = true 
-                                            PosMonMasteryGun = v.HumanoidRootPart.CFrame
+                                            StartMasteryArmaMagnet = true 
+                                            PosMonMasteryArma = v.HumanoidRootPart.CFrame
                                         else
-                                            StartMasteryGunMagnet = false
+                                            StartMasteryArmaMagnet = false
                                             game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("AbandonQuest")
                                         end
-                                    until v.Humanoid.Health <= 0 or _G.AutoFarmGunMastery == false or game:GetService("Players").LocalPlayer.PlayerGui.Main.Quest.Visible == false
-                                    StartMasteryGunMagnet = false
+                                    until v.Humanoid.Health <= 0 or _G.AutoFarmArmaMastery == false or game:GetService("Players").LocalPlayer.PlayerGui.Main.Quest.Visible == false
+                                    StartMasteryArmaMagnet = false
                                 end
                             end
                         end)
@@ -7047,7 +7047,7 @@ end)
 
 spawn(function()
     while wait() do
-        if _G.BuyAllSword then
+        if _G.BuyAllEspada then
             pcall(function()
                 game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("BuyItem","Cutlass")
                 game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("BuyItem","Katana")
@@ -7402,38 +7402,38 @@ spawn(function()
                             end
                         end
                     end
-                    if _G.AutoFarmGunMastery and StartMasteryGunMagnet then
+                    if _G.AutoFarmArmaMastery and StartMasteryArmaMagnet then
                         if v.Name == "Monkey" then
-                            if (v.HumanoidRootPart.Position - PosMonMasteryGun.Position).Magnitude <= _G.BringMode and v:FindFirstChild("Humanoid") and v:FindFirstChild("HumanoidRootPart") and v.Humanoid.Health > 0 then
+                            if (v.HumanoidRootPart.Position - PosMonMasteryArma.Position).Magnitude <= _G.BringMode and v:FindFirstChild("Humanoid") and v:FindFirstChild("HumanoidRootPart") and v.Humanoid.Health > 0 then
                                 v.HumanoidRootPart.Size = Vector3.new(50,50,50)
                                 v.Humanoid:ChangeState(14)
                                 v.HumanoidRootPart.CanCollide = false
                                 v.Head.CanCollide = false
-                                v.HumanoidRootPart.CFrame = PosMonMasteryGun
+                                v.HumanoidRootPart.CFrame = PosMonMasteryArma
                                 if v.Humanoid:FindFirstChild("Animator") then
                                     v.Humanoid.Animator:Destroy()
                                 end
                                 sethiddenproperty(game:GetService("Players").LocalPlayer, "SimulationRadius", math.huge)
                             end
                         elseif v.Name == "Factory Staff" then
-                            if (v.HumanoidRootPart.Position - PosMonMasteryGun.Position).Magnitude <= _G.BringMode and v:FindFirstChild("Humanoid") and v:FindFirstChild("HumanoidRootPart") and v.Humanoid.Health > 0 then
+                            if (v.HumanoidRootPart.Position - PosMonMasteryArma.Position).Magnitude <= _G.BringMode and v:FindFirstChild("Humanoid") and v:FindFirstChild("HumanoidRootPart") and v.Humanoid.Health > 0 then
                                 v.HumanoidRootPart.Size = Vector3.new(50,50,50)
                                 v.Humanoid:ChangeState(14)
                                 v.HumanoidRootPart.CanCollide = false
                                 v.Head.CanCollide = false
-                                v.HumanoidRootPart.CFrame = PosMonMasteryGun
+                                v.HumanoidRootPart.CFrame = PosMonMasteryArma
                                 if v.Humanoid:FindFirstChild("Animator") then
                                     v.Humanoid.Animator:Destroy()
                                 end
                                 sethiddenproperty(game:GetService("Players").LocalPlayer, "SimulationRadius", math.huge)
                             end
                         elseif v.Name == Mon then
-                            if (v.HumanoidRootPart.Position - PosMonMasteryGun.Position).Magnitude <= _G.BringMode and v:FindFirstChild("Humanoid") and v:FindFirstChild("HumanoidRootPart") and v.Humanoid.Health > 0 then
+                            if (v.HumanoidRootPart.Position - PosMonMasteryArma.Position).Magnitude <= _G.BringMode and v:FindFirstChild("Humanoid") and v:FindFirstChild("HumanoidRootPart") and v.Humanoid.Health > 0 then
                                 v.HumanoidRootPart.Size = Vector3.new(50,50,50)
                                 v.Humanoid:ChangeState(14)
                                 v.HumanoidRootPart.CanCollide = false
                                 v.Head.CanCollide = false
-                                v.HumanoidRootPart.CFrame = PosMonMasteryGun
+                                v.HumanoidRootPart.CFrame = PosMonMasteryArma
                                 if v.Humanoid:FindFirstChild("Animator") then
                                     v.Humanoid.Animator:Destroy()
                                 end
@@ -7828,24 +7828,24 @@ spawn(function()
     
                 spawn(function()
                     while wait() do
-                        if _G.AutoBuyLegendarySword then
+                        if _G.AutoBuyLegendaryEspada then
                             pcall(function()
                                 local args = {
-                                    [1] = "LegendarySwordDealer",
+                                    [1] = "LegendaryEspadaDealer",
                                     [2] = "1"
                                 }
                                 game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer(unpack(args))
                                 local args = {
-                                    [1] = "LegendarySwordDealer",
+                                    [1] = "LegendaryEspadaDealer",
                                     [2] = "2"
                                 }
                                 game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer(unpack(args))
                                 local args = {
-                                    [1] = "LegendarySwordDealer",
+                                    [1] = "LegendaryEspadaDealer",
                                     [2] = "3"
                                 }
                                 game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer(unpack(args))
-                                if _G.AutoBuyLegendarySword_Hop and _G.AutoBuyLegendarySword and World2 then
+                                if _G.AutoBuyLegendaryEspada_Hop and _G.AutoBuyLegendaryEspada and World2 then
                                     wait(10)
                                     Hop()
                                 end
@@ -7907,18 +7907,18 @@ spawn(function()
                                 }
                                 game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer(unpack(args))
                             end 
-                            if sword then
+                            if Espada then
                                 local args = {
                                     [1] = "AddPoint",
-                                    [2] = "Sword",
+                                    [2] = "Espada",
                                     [3] = PointStats
                                 }
                                 game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer(unpack(args))
                             end 
-                            if gun then
+                            if Arma then
                                 local args = {
                                     [1] = "AddPoint",
-                                    [2] = "Gun",
+                                    [2] = "Arma",
                                     [3] = PointStats
                                 }
                                 game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer(unpack(args))
@@ -8902,7 +8902,7 @@ end)
 spawn(function()
     while task.wait() do
         pcall(function()
-            if _G.Auto_Saber and game.Players.LocalPlayer.Data.Level.Value >= 200 and not Check_Sword("Saber") and World1 then
+            if _G.Auto_Saber and game.Players.LocalPlayer.Data.Level.Value >= 200 and not Check_Espada("Saber") and World1 then
                 ToggleFarm:Set(false)
                 _G.Auto_Saber = true
             end
@@ -8912,7 +8912,7 @@ end)
 
 spawn(function()
     while task.wait() do
-        if _G.Auto_Saber and game.Players.LocalPlayer.Data.Level.Value >= 200 and not Check_Sword("Saber") and World1 then
+        if _G.Auto_Saber and game.Players.LocalPlayer.Data.Level.Value >= 200 and not Check_Espada("Saber") and World1 then
             pcall(function()
                 ToggleFarm:Set(false)
                 if game:GetService("Workspace").Map.Jungle.Final.Part.Transparency == 0 then
@@ -9341,38 +9341,38 @@ spawn(function()
                             end
                         end
                     end
-                    if _G.AutoFarmGunMastery and StartMasteryGunMagnet then
+                    if _G.AutoFarmArmaMastery and StartMasteryArmaMagnet then
                         if v.Name == "Monkey" then
-                            if (v.HumanoidRootPart.Position - PosMonMasteryGun.Position).Magnitude <= _G.BringMode and v:FindFirstChild("Humanoid") and v:FindFirstChild("HumanoidRootPart") and v.Humanoid.Health > 0 then
+                            if (v.HumanoidRootPart.Position - PosMonMasteryArma.Position).Magnitude <= _G.BringMode and v:FindFirstChild("Humanoid") and v:FindFirstChild("HumanoidRootPart") and v.Humanoid.Health > 0 then
                                 v.HumanoidRootPart.Size = Vector3.new(50,50,50)
                                 v.Humanoid:ChangeState(14)
                                 v.HumanoidRootPart.CanCollide = false
                                 v.Head.CanCollide = false
-                                v.HumanoidRootPart.CFrame = PosMonMasteryGun
+                                v.HumanoidRootPart.CFrame = PosMonMasteryArma
                                 if v.Humanoid:FindFirstChild("Animator") then
                                     v.Humanoid.Animator:Destroy()
                                 end
                                 sethiddenproperty(game:GetService("Players").LocalPlayer, "SimulationRadius", math.huge)
                             end
                         elseif v.Name == "Factory Staff" then
-                            if (v.HumanoidRootPart.Position - PosMonMasteryGun.Position).Magnitude <= _G.BringMode and v:FindFirstChild("Humanoid") and v:FindFirstChild("HumanoidRootPart") and v.Humanoid.Health > 0 then
+                            if (v.HumanoidRootPart.Position - PosMonMasteryArma.Position).Magnitude <= _G.BringMode and v:FindFirstChild("Humanoid") and v:FindFirstChild("HumanoidRootPart") and v.Humanoid.Health > 0 then
                                 v.HumanoidRootPart.Size = Vector3.new(50,50,50)
                                 v.Humanoid:ChangeState(14)
                                 v.HumanoidRootPart.CanCollide = false
                                 v.Head.CanCollide = false
-                                v.HumanoidRootPart.CFrame = PosMonMasteryGun
+                                v.HumanoidRootPart.CFrame = PosMonMasteryArma
                                 if v.Humanoid:FindFirstChild("Animator") then
                                     v.Humanoid.Animator:Destroy()
                                 end
                                 sethiddenproperty(game:GetService("Players").LocalPlayer, "SimulationRadius", math.huge)
                             end
                         elseif v.Name == Mon then
-                            if (v.HumanoidRootPart.Position - PosMonMasteryGun.Position).Magnitude <= _G.BringMode and v:FindFirstChild("Humanoid") and v:FindFirstChild("HumanoidRootPart") and v.Humanoid.Health > 0 then
+                            if (v.HumanoidRootPart.Position - PosMonMasteryArma.Position).Magnitude <= _G.BringMode and v:FindFirstChild("Humanoid") and v:FindFirstChild("HumanoidRootPart") and v.Humanoid.Health > 0 then
                                 v.HumanoidRootPart.Size = Vector3.new(50,50,50)
                                 v.Humanoid:ChangeState(14)
                                 v.HumanoidRootPart.CanCollide = false
                                 v.Head.CanCollide = false
-                                v.HumanoidRootPart.CFrame = PosMonMasteryGun
+                                v.HumanoidRootPart.CFrame = PosMonMasteryArma
                                 if v.Humanoid:FindFirstChild("Animator") then
                                     v.Humanoid.Animator:Destroy()
                                 end
@@ -9472,7 +9472,7 @@ end
 local BigMomPos = CFrame.new(-731.2034301757812, 381.5658874511719, -11198.4951171875)
     spawn(function()
         while wait() do
-            if _G.AutoBudySword and World3 then
+            if _G.AutoBudyEspada and World3 then
                 pcall(function()
                     if game:GetService("Workspace").Enemies:FindFirstChild("Cake Queen") then
                         for i,v in pairs(game:GetService("Workspace").Enemies:GetChildren()) do
@@ -9488,7 +9488,7 @@ local BigMomPos = CFrame.new(-731.2034301757812, 381.5658874511719, -11198.49511
                                         game:GetService("VirtualUser"):CaptureController()
                                         game:GetService("VirtualUser"):Button1Down(Vector2.new(1280,672))
                                         sethiddenproperty(game.Players.LocalPlayer,"SimulationRadius",math.huge)
-                                    until not _G.AutoBudySword or not v.Parent or v.Humanoid.Health <= 0
+                                    until not _G.AutoBudyEspada or not v.Parent or v.Humanoid.Health <= 0
                                 end
                             end
                         end
@@ -9506,7 +9506,7 @@ local BigMomPos = CFrame.new(-731.2034301757812, 381.5658874511719, -11198.49511
                         if game:GetService("ReplicatedStorage"):FindFirstChild("Cake Queen") then
                             topos(game:GetService("ReplicatedStorage"):FindFirstChild("Cake Queen").HumanoidRootPart.CFrame * CFrame.new(2,20,2))
                         else
-                            if _G.AutoBudySwordHop then
+                            if _G.AutoBudyEspadaHop then
                                 Hop()
                             end
                         end
@@ -9887,7 +9887,7 @@ spawn(function()
                             for i,v in pairs(game:GetService("Workspace").Enemies:GetChildren()) do
                                 if v.Name == "Cursed Skeleton Boss" or v.Name == "Cursed Skeleton" then
                                     if v.Humanoid.Health > 0 then
-                                        EquipWeapon(Sword)
+                                        EquipWeapon(Espada)
                                         topos(v.HumanoidRootPart.CFrame * Pos)
                                         v.HumanoidRootPart.Size = Vector3.new(60, 60, 60)
                                         v.HumanoidRootPart.Transparency = 1
@@ -9995,7 +9995,7 @@ spawn(function()
                             if (v.HumanoidRootPart.Position - game.Players.LocalPlayer.Character.HumanoidRootPart.Position).Magnitude > 2000 then
                                 topos(v.HumanoidRootPart.CFrame * Pos)
                             else
-                                EquipWeapon(Sword)
+                                EquipWeapon(Espada)
                                 topos(v.HumanoidRootPart.CFrame * Pos)
                                 v.HumanoidRootPart.Size = Vector3.new(60, 60, 60)
                                 v.HumanoidRootPart.Transparency = 1
@@ -10042,7 +10042,7 @@ spawn(function()
                                 if v.Name == "Cursed Skeleton" or v.Name == "Cursed Skeleton" or v.Name == "Hell's Messenger]" then
                                     if v.Humanoid.Health > 0 then
                                         repeat wait()
-                                            EquipWeapon(Sword)
+                                            EquipWeapon(Espada)
                                             topos(v.HumanoidRootPart.CFrame * Pos)
                                             v.HumanoidRootPart.Size = Vector3.new(60, 60, 60)
                                             v.HumanoidRootPart.Transparency = 1
@@ -10121,7 +10121,7 @@ spawn(function()
                         if Auto_Quest_Tushita_2 and v:FindFirstChild("HumanoidRootPart") and v:FindFirstChild("Humanoid") and v.Humanoid.Health > 0 then
                             if (v.HumanoidRootPart.Position - game.Players.LocalPlayer.Character.HumanoidRootPart.Position).Magnitude < 2000 then
                                 repeat wait()
-                                    EquipWeapon(Sword)
+                                    EquipWeapon(Espada)
                                     topos(v.HumanoidRootPart.CFrame * Pos)
                                     v.HumanoidRootPart.Size = Vector3.new(60, 60, 60)
                                     v.HumanoidRootPart.Transparency = 1
@@ -10157,7 +10157,7 @@ spawn(function()
                             if v.Name == "Cake Queen" then
                                 if v.Humanoid.Health > 0 then
                                     repeat wait()
-                                        EquipWeapon(Sword)
+                                        EquipWeapon(Espada)
                                         topos(v.HumanoidRootPart.CFrame * Pos)
                                         v.HumanoidRootPart.Size = Vector3.new(60, 60, 60)
                                         v.HumanoidRootPart.Transparency = 1
@@ -10186,7 +10186,7 @@ spawn(function()
                                 if v.Name == "Cursed Skeleton" or v.Name == "Cursed Skeleton" or v.Name == "Heaven's Guardian" then
                                     if v.Humanoid.Health > 0 then
                                         repeat wait()
-                                            EquipWeapon(Sword)
+                                            EquipWeapon(Espada)
                                             topos(v.HumanoidRootPart.CFrame * Pos)
                                             v.HumanoidRootPart.Size = Vector3.new(60, 60, 60)
                                             v.HumanoidRootPart.Transparency = 1
@@ -10775,12 +10775,12 @@ spawn(function()
                                 topos(game.Players:FindFirstChild(_G.SelectPly).Character.HumanoidRootPart.CFrame * CFrame.new(0,5,0))
                                 spawn(function()
                                     pcall(function()
-                                        if _G.SelectWeapon == SelectWeaponGun then
+                                        if _G.SelectWeapon == SelectWeaponArma then
                                             local args = {
                                                 [1] = game.Players:FindFirstChild(_G.SelectPly).Character.HumanoidRootPart.Position,
                                                 [2] = game.Players:FindFirstChild(_G.SelectPly).Character.HumanoidRootPart
                                             }
-                                            game:GetService("Players").LocalPlayer.Character[SelectWeaponGun].RemoteFunctionShoot:InvokeServer(unpack(args))
+                                            game:GetService("Players").LocalPlayer.Character[SelectWeaponArma].RemoteFunctionShoot:InvokeServer(unpack(args))
                                         else
                                             game:GetService("VirtualUser"):CaptureController()
                                             game:GetService("VirtualUser"):Button1Down(Vector2.new(1280,672))
@@ -10819,14 +10819,14 @@ end)
 
 spawn(function()
     while task.wait() do
-        if _G.Aimbot_Gun and game:GetService("Players").LocalPlayer.Character:FindFirstChild(SelectWeaponGun) then
+        if _G.Aimbot_Arma and game:GetService("Players").LocalPlayer.Character:FindFirstChild(SelectWeaponArma) then
             pcall(function()
-                game:GetService("Players").LocalPlayer.Character[SelectWeaponGun].Cooldown.Value = 0
+                game:GetService("Players").LocalPlayer.Character[SelectWeaponArma].Cooldown.Value = 0
                 local args = {
                     [1] = game:GetService("Players"):FindFirstChild(PlayerSelectAimbot).Character.HumanoidRootPart.Position,
                     [2] = game:GetService("Players"):FindFirstChild(PlayerSelectAimbot).Character.HumanoidRootPart
                 }
-                game:GetService("Players").LocalPlayer.Character[SelectWeaponGun].RemoteFunctionShoot:InvokeServer(unpack(args))
+                game:GetService("Players").LocalPlayer.Character[SelectWeaponArma].RemoteFunctionShoot:InvokeServer(unpack(args))
                 game:GetService'VirtualUser':CaptureController()
                 game:GetService'VirtualUser':Button1Down(Vector2.new(1280, 672))
             end)
@@ -11075,7 +11075,7 @@ spawn(function()
                             topos(v.CFrame* Pos)
                             for i,v in pairs(game.Players.LocalPlayer.Backpack:GetChildren()) do
                                 if v:IsA("Tool") then
-                                    if v.ToolTip == "Melee" then -- "Blox Fruit" , "Sword" , "Wear" , "Agility"
+                                    if v.ToolTip == "Melee" then -- "Blox Fruit" , "Espada" , "Wear" , "Agility"
                                         game.Players.LocalPlayer.Character.Humanoid:EquipTool(v)
                                     end
                                 end
@@ -11090,7 +11090,7 @@ spawn(function()
                             game:GetService("VirtualInputManager"):SendKeyEvent(false,99,false,game.Players.LocalPlayer.Character.HumanoidRootPart)
                             for i,v in pairs(game.Players.LocalPlayer.Backpack:GetChildren()) do
                                 if v:IsA("Tool") then
-                                    if v.ToolTip == "Blox Fruit" then -- "Blox Fruit" , "Sword" , "Wear" , "Agility"
+                                    if v.ToolTip == "Blox Fruit" then -- "Blox Fruit" , "Espada" , "Wear" , "Agility"
                                         game.Players.LocalPlayer.Character.Humanoid:EquipTool(v)
                                     end
                                 end
@@ -11107,7 +11107,7 @@ spawn(function()
                             wait(0.5)
                             for i,v in pairs(game.Players.LocalPlayer.Backpack:GetChildren()) do
                                 if v:IsA("Tool") then
-                                    if v.ToolTip == "Sword" then -- "Blox Fruit" , "Sword" , "Wear" , "Agility"
+                                    if v.ToolTip == "Espada" then -- "Blox Fruit" , "Espada" , "Wear" , "Agility"
                                         game.Players.LocalPlayer.Character.Humanoid:EquipTool(v)
                                     end
                                 end
@@ -11123,7 +11123,7 @@ spawn(function()
                             wait(0.5)
                             for i,v in pairs(game.Players.LocalPlayer.Backpack:GetChildren()) do
                                 if v:IsA("Tool") then
-                                    if v.ToolTip == "Gun" then -- "Blox Fruit" , "Sword" , "Wear" , "Agility"
+                                    if v.ToolTip == "Arma" then -- "Blox Fruit" , "Espada" , "Wear" , "Agility"
                                         game.Players.LocalPlayer.Character.Humanoid:EquipTool(v)
                                     end
                                 end
