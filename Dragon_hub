@@ -2993,7 +2993,30 @@ end
     local Section = M:AddSection({
         Name = "Auto Farm Level"
     })
+    
+    M:AddToggle({
+    Name = "Auto Farm",
+    Default = false,
+    Callback = function(Value)
+        _G.Auto_Farm = Value
+        
+        -- Inicia o loop de farming quando o toggle for ativado
+        if Value then
+            spawn(function()
+                while _G.Auto_Farm do
+                    wait(0.1) -- Espera 0.1 segundos entre cada iteração
 
+                    -- Adicione suas funções de farming aqui
+                    -- Exemplo: Coletar recursos ou completar quests
+                    local args = {
+                        [1] = "Farm" -- Substitua pelo comando correto para farmar
+                    }
+                    game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer(unpack(args))
+                end
+            end)
+        end
+    end
+})
 
 M:AddParagraph("Main Farm","Click to Box to Farm, I ready update new mob farm!.")
 
