@@ -2510,26 +2510,25 @@ CamShake:Stop()
     end
 
 local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/DragonSCP/dragonscript/refs/heads/main/hub')))()
-local Window = OrionLib:MakeWindow({Name = "Dragon HUB", HidePremium = false, IntroText = "", SaveConfig = true, ConfigFolder = "Dragon HUB"})
-
+local Window = OrionLib:MakeWindow({ Name = "Dragon HUB", HidePremium = false, IntroText = "", SaveConfig = true, ConfigFolder = "Dragon HUB"})
 OrionLib:MakeNotification({
 	Name = "Dragon HUB",
 	Content = "Choose Teams Bro?",
-	Image = "rbxassetid://119980140458596",
+	Image = "rbxassetid://7036289209",
 	Time = 7
 })
 
 OrionLib:MakeNotification({
 	Name = "Dragon HUB",
 	Content = "Dragon HUB",
-	Image = "rbxassetid://119980140458596",
+	Image = "rbxassetid://7036289209",
 	Time = 25
 })
 
 OrionLib:MakeNotification({
     Name = "Dragon HUB",
-    Content = "Please Wait loading script...,Do not enable any function",
-    Image = "rbxassetid://119980140458596",
+    Content = "Script loaded successfully! You can now use the functions.",
+    Image = "rbxassetid://7036289209",
     Time = 5
 })
 
@@ -2537,85 +2536,85 @@ OrionLib:MakeNotification({
 
 local W = Window:MakeTab({
     Name = "Welcome",
-    Icon = "rbxassetid://119980140458596",
+    Icon = "rbxassetid://7036289209",
     PremiumOnly = false
 })
 
 local M = Window:MakeTab({
     Name = "General",
-    Icon = "rbxassetid://119980140458596",
+    Icon = "rbxassetid://7036289209",
     PremiumOnly = false
 })
 
 local ST = Window:MakeTab({
     Name = "Setting",
-    Icon = "rbxassetid://119980140458596",
+    Icon = "rbxassetid://7036289209",
     PremiumOnly = false
 })
 
 local IQ = Window:MakeTab({
     Name = "Item & Quest",
-    Icon = "rbxassetid://119980140458596",
+    Icon = "rbxassetid://7036289209",
     PremiumOnly = false
 })
 
 local S = Window:MakeTab({
     Name = "Stats",
-    Icon = "rbxassetid://119980140458596",
+    Icon = "rbxassetid://7036289209",
     PremiumOnly = false
 })
 
 local E = Window:MakeTab({
     Name = "ESP",
-    Icon = "rbxassetid://119980140458596",
+    Icon = "rbxassetid://7036289209",
     PremiumOnly = false
 })
 
 local RA = Window:MakeTab({
     Name = "Raid",
-    Icon = "rbxassetid://119980140458596",
+    Icon = "rbxassetid://7036289209",
     PremiumOnly = false
 })
 
 local LC = Window:MakeTab({
     Name = "Local Players",
-    Icon = "rbxassetid://119980140458596",
+    Icon = "rbxassetid://7036289209",
     PremiumOnly = false
 })
 
 local Wld = Window:MakeTab({
     Name = "World Teleport",
-    Icon = "rbxassetid://119980140458596",
+    Icon = "rbxassetid://7036289209",
     PremiumOnly = false
 })
 
 local SV = Window:MakeTab({
     Name = "Status Sever",
-    Icon = "rbxassetid://119980140458596",
+    Icon = "rbxassetid://7036289209",
     PremiumOnly = false
 })
 
 local D = Window:MakeTab({
     Name = "Devil Fruit",
-    Icon = "rbxassetid://119980140458596",
+    Icon = "rbxassetid://7036289209",
     PremiumOnly = false
 })
 
 local R = Window:MakeTab({
     Name = "Race V4",
-    Icon = "rbxassetid://119980140458596",
+    Icon = "rbxassetid://7036289209",
     PremiumOnly = false
 })
 
 local SH = Window:MakeTab({
     Name = "Shop",
-    Icon = "rbxassetid://119980140458596",
+    Icon = "rbxassetid://7036289209",
     PremiumOnly = false
 })
 
 local C = Window:MakeTab({
     Name = "Misc",
-    Icon = "rbxassetid://119980140458596",
+    Icon = "rbxassetid://7036289209",
     PremiumOnly = false
 })
 
@@ -2966,19 +2965,14 @@ end
         "SUB2NOOBMASTER123",
         "SUB2DAIGROCK",
         "AXIORE",
-        "TANTAIGAMING",
+        "TANTAIGAMIMG",
         "STRAWHATMAINE",
         "JCWK",
         "FUDD10_V2",
         "SUB2FER999",
         "MAGICBIS",
         "TY_FOR_WATCHING",
-        "STARCODEHEO",
-        "EARN_FRUITS",
-        "KITT_RESET",
-        "BLUXXY",
-        "CHANDLER",
-        "SUB2UNCLEKIZARU"
+        "STARCODEHEO"
     }
     
     
@@ -2998,30 +2992,7 @@ end
     local Section = M:AddSection({
         Name = "Auto Farm Level"
     })
-    
-    M:AddToggle({
-    Name = "Auto Farm",
-    Default = false,
-    Callback = function(Value)
-        _G.Auto_Farm = Value
-        
-        -- Inicia o loop de farming quando o toggle for ativado
-        if Value then
-            spawn(function()
-                while _G.Auto_Farm do
-                    wait(0.1) -- Espera 0.1 segundos entre cada iteração
 
-                    -- Adicione suas funções de farming aqui
-                    -- Exemplo: Coletar recursos ou completar quests
-                    local args = {
-                        [1] = "Farm" -- Substitua pelo comando correto para farmar
-                    }
-                    game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer(unpack(args))
-                end
-            end)
-        end
-    end
-})
 
 M:AddParagraph("Main Farm","Click to Box to Farm, I ready update new mob farm!.")
 
@@ -3730,6 +3701,16 @@ M:AddParagraph("Auto Farm Boss :","Chờ Update thôi ae!!!")
         Save = true,
         Callback = function(Value)
             _G.Auto_God_Human = Value
+        end    
+    })
+
+    M:AddToggle({
+        Name = "Auto Quest Player",
+        Default = false,
+        Flag = "Auto Quest Player",
+        Save = true,
+        Callback = function(Value)
+            _G.Auto_Quest_Player = Value
         end    
     })
 
@@ -8367,13 +8348,13 @@ pcall(function()
                 OrionLib:MakeNotification({
                     Name = "Dragon HUB(Noitification)",
                     Content = "[EN] : Please cancel the farrm level quest (if any)",
-                    Image = "rbxassetid://119980140458596",
+                    Image = "rbxassetid://7036289209",
                     Time = 9
                 })
                 OrionLib:MakeNotification({
                     Name = "Dragon HUB(Noitification)",
                     Content = "[VN] : Làm ơn hủy nhiệm vụ farrm level(nếu có)",
-                    Image = "rbxassetid://119980140458596",
+                    Image = "rbxassetid://7036289209",
                     Time = 9
                 })
             end
@@ -8691,7 +8672,7 @@ spawn(function()
             OrionLib:MakeNotification({
                 Name = "Dragon HUB",
                 Content = "You not have beli or fragment!",
-                Image = "rbxassetid://119980140458596",
+                Image = "rbxassetid://7036289209",
                 Time = 5
             })
             end
@@ -11313,7 +11294,7 @@ spawn(function()
                 OrionLib:MakeNotification({
                     Name = "Dragon HUB",
                     Content = "Turn Off Hop Find Moon Please",
-                    Image = "rbxassetid://119980140458596",
+                    Image = "rbxassetid://7036289209",
                     Time = 5
                 })
             elseif game:GetService("Lighting").Sky.MoonTextureId=="http://www.roblox.com/asset/?id=9709143733" then
@@ -11321,7 +11302,7 @@ spawn(function()
                 OrionLib:MakeNotification({
                     Name = "Dragon HUB",
                     Content = "Hop Server",
-                    Image = "rbxassetid://119980140458596",
+                    Image = "rbxassetid://7036289209",
                     Time = 5
                 })
             elseif game:GetService("Lighting").Sky.MoonTextureId=="http://www.roblox.com/asset/?id=9709150401" then
@@ -11329,7 +11310,7 @@ spawn(function()
                 OrionLib:MakeNotification({
                     Name = "Dragon HUB",
                     Content = "Hop Server",
-                    Image = "rbxassetid://119980140458596",
+                    Image = "rbxassetid://7036289209",
                     Time = 5
                 })
             elseif game:GetService("Lighting").Sky.MoonTextureId=="http://www.roblox.com/asset/?id=9709149680" then
@@ -11337,7 +11318,7 @@ spawn(function()
                 OrionLib:MakeNotification({
                     Name = "Dragon HUB",
                     Content = "Hop Server",
-                    Image = "rbxassetid://119980140458596",
+                    Image = "rbxassetid://7036289209",
                     Time = 5
                 })
             else
@@ -11348,11 +11329,11 @@ spawn(function()
     end)
 
 OrionLib:MakeNotification({
-        Name = "Dragon HUB",
-        Content = "Loading script complete!, You can now enable the function!",
-        Image = "rbxassetid://119980140458596",
-        Time = 5
-    })
+    Name = "Dragon HUB",
+    Content = "Welcome to Dragon HUB! You can now use the functions.",
+    Image = "rbxassetid://7036289209",
+    Time = 5
+})
 
 _G.Remove_Effect = true
 
@@ -11393,6 +11374,6 @@ OrionLib:Init()
 OrionLib:MakeNotification({
     Name = "Dragon HUB",
     Content = "Loading Config Complete!!",
-    Image = "rbxassetid://119980140458596",
+    Image = "rbxassetid://7036289209",
     Time = 5
 })
