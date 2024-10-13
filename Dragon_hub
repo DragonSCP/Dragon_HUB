@@ -2510,19 +2510,19 @@ CamShake:Stop()
     end
 
 local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/DragonSCP/dragonscript/refs/heads/main/hub')))()
-local Window = OrionLib:MakeWindow({ Name = "Dragon HUB", HidePremium = false, IntroText = "", SaveConfig = true, ConfigFolder = "Dragon HUB"})
-OrionLib:MakeNotification({
-	Name = "Dragon HUB",
-	Content = "Choose Teams Bro?",
-	Image = "rbxassetid://7036289209",
-	Time = 7
+local Window = OrionLib:MakeWindow({ 
+    Name = "Dragon HUB",         
+    HidePremium = false,         
+    IntroText = "",              
+    SaveConfig = true,           
+    ConfigFolder = "Dragon HUB"  
 })
 
 OrionLib:MakeNotification({
-	Name = "Dragon HUB",
-	Content = "Dragon HUB",
-	Image = "rbxassetid://7036289209",
-	Time = 25
+    Name = "Dragon HUB",
+    Content = "Choose Teams Bro?",  
+    Image = "rbxassetid://7036289209", 
+    Time = 7                         
 })
 
 OrionLib:MakeNotification({
