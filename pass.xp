@@ -93,16 +93,6 @@ local RemoteScanner = {
         
         print(string.format("[SCANNER] Total encontrado: %d remotes", #self.FoundRemotes))
         return self.FoundRemotes
-    end,
-    
-    GetRemotesByKeyword = function(self, keyword)
-        local results = {}
-        for _, remote in pairs(self.FoundRemotes) do
-            if remote.Name:lower():match(keyword:lower()) then
-                table.insert(results, remote)
-            end
-        end
-        return results
     end
 }
 
@@ -244,10 +234,8 @@ local MethodTester = {
     end,
     
     GetCurrentXP = function(self)
-        -- Tenta múltiplas formas de obter XP atual
         local xp = 0
         
-        -- Método 1: Atributo direto
         xp = LocalPlayer:GetAttribute("SeasonPassXP") or 
              LocalPlayer:GetAttribute("BattlePassXP") or
              LocalPlayer:GetAttribute("PassXP") or
@@ -255,7 +243,6 @@ local MethodTester = {
         
         if xp and xp > 0 then return xp end
         
-        -- Método 2: PlayerData
         local playerData = ReplicatedStorage:FindFirstChild("PlayerData")
         if playerData then
             local data = playerData:FindFirstChild(LocalPlayer.Name)
@@ -265,7 +252,6 @@ local MethodTester = {
             end
         end
         
-        -- Método 3: Character
         if LocalPlayer.Character then
             xp = LocalPlayer.Character:GetAttribute("SeasonPassXP") or
                  LocalPlayer.Character:GetAttribute("XP")
@@ -318,9 +304,8 @@ local MethodTester = {
             table.insert(self.TestResults, result)
             
             local status = result.Worked and "✓ FUNCIONOU!" or (success and "✗ Executou mas sem XP" or "✗ Erro")
-            local color = result.Worked and "\27[32m" or (success and "\27[33m" or "\27[31m")
             
-            print(string.format("%s[MÉTODO %d] %s - %s\27[0m", color, i, method.Name, status))
+            print(string.format("[MÉTODO %d] %s - %s", i, method.Name, status))
             if result.Worked then
                 print(string.format("  → XP Ganho: %s (de %s para %s)", 
                     XPUtils.FormatNumber(xpGained),
@@ -371,7 +356,7 @@ local MethodTester = {
     end
 }
 
--- Sistema de Farm com método identificado
+-- Sistema de Farm
 local FarmSystem = {
     Active = false,
     WorkingMethod = nil,
@@ -424,7 +409,6 @@ local FarmSystem = {
     ExecuteFarm = function(self)
         local xpBefore = MethodTester:GetCurrentXP()
         
-        -- Encontra o remote e executa o método
         local remote = nil
         for _, r in pairs(RemoteScanner.FoundRemotes) do
             if r.Name == self.WorkingRemote then
@@ -438,7 +422,6 @@ local FarmSystem = {
             return
         end
         
-        -- Executa o método que funcionou
         local methodName = "Method" .. self.WorkingMethod.MethodNumber .. "_" .. self.WorkingMethod.MethodName
         local method = MethodTester[methodName]
         
@@ -481,18 +464,25 @@ local FarmSystem = {
     end
 }
 
--- GUI Avançada
+-- GUI CORRIGIDA
 local function CreateGUI()
+    -- Remove GUI antiga se existir
+    if game.CoreGui:FindFirstChild("SeasonPassTesterGUI") then
+        game.CoreGui.SeasonPassTesterGUI:Destroy()
+    end
+    
     local ScreenGui = Instance.new("ScreenGui")
     ScreenGui.Name = "SeasonPassTesterGUI"
     ScreenGui.ResetOnSpawn = false
-    ScreenGui.Parent = game.CoreGui
+    ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
     
     local Frame = Instance.new("Frame")
-    Frame.Size = UDim2.new(0, 400, 0, 550)
-    Frame.Position = UDim2.new(0.5, -200, 0.5, -275)
+    Frame.Name = "MainFrame"
+    Frame.Size = UDim2.new(0, 450, 0, 600)
+    Frame.Position = UDim2.new(0.5, -225, 0.5, -300)
     Frame.BackgroundColor3 = Color3.fromRGB(20, 20, 30)
-    Frame.BorderSizePixel = 0
+    Frame.BorderSizePixel = 2
+    Frame.BorderColor3 = Color3.fromRGB(60, 60, 80)
     Frame.Active = true
     Frame.Draggable = true
     Frame.Parent = ScreenGui
@@ -502,10 +492,12 @@ local function CreateGUI()
     UICorner.Parent = Frame
     
     local Title = Instance.new("TextLabel")
+    Title.Name = "Title"
     Title.Size = UDim2.new(1, 0, 0, 50)
+    Title.Position = UDim2.new(0, 0, 0, 0)
     Title.BackgroundColor3 = Color3.fromRGB(30, 30, 45)
-    Title.Text = "XP FARM TESTER V2.0"
-    Title.TextColor3 = Color3.new(1, 1, 1)
+    Title.Text = "🔬 XP FARM TESTER V2.0"
+    Title.TextColor3 = Color3.fromRGB(255, 255, 255)
     Title.TextSize = 20
     Title.Font = Enum.Font.GothamBold
     Title.Parent = Frame
@@ -514,68 +506,96 @@ local function CreateGUI()
     TitleCorner.CornerRadius = UDim.new(0, 12)
     TitleCorner.Parent = Title
     
-    local ScrollFrame = Instance.new("ScrollingFrame")
-    ScrollFrame.Size = UDim2.new(1, -20, 1, -120)
-    ScrollFrame.Position = UDim2.new(0, 10, 0, 60)
-    ScrollFrame.BackgroundColor3 = Color3.fromRGB(25, 25, 35)
-    ScrollFrame.BorderSizePixel = 0
-    ScrollFrame.ScrollBarThickness = 6
-    ScrollFrame.Parent = Frame
+    local StatusLabel = Instance.new("TextLabel")
+    StatusLabel.Name = "StatusLabel"
+    StatusLabel.Size = UDim2.new(1, -20, 0, 60)
+    StatusLabel.Position = UDim2.new(0, 10, 0, 60)
+    StatusLabel.BackgroundColor3 = Color3.fromRGB(25, 25, 35)
+    StatusLabel.Text = "Status: Aguardando...\nRemotes: 0 | Métodos: 0"
+    StatusLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+    StatusLabel.TextSize = 14
+    StatusLabel.Font = Enum.Font.Gotham
+    StatusLabel.TextWrapped = true
+    StatusLabel.Parent = Frame
     
-    local ScrollCorner = Instance.new("UICorner")
-    ScrollCorner.CornerRadius = UDim.new(0, 8)
-    ScrollCorner.Parent = ScrollFrame
+    local StatusCorner = Instance.new("UICorner")
+    StatusCorner.CornerRadius = UDim.new(0, 8)
+    StatusCorner.Parent = StatusLabel
+    
+    local ButtonContainer = Instance.new("Frame")
+    ButtonContainer.Name = "ButtonContainer"
+    ButtonContainer.Size = UDim2.new(1, -20, 1, -210)
+    ButtonContainer.Position = UDim2.new(0, 10, 0, 130)
+    ButtonContainer.BackgroundTransparency = 1
+    ButtonContainer.Parent = Frame
     
     local UIListLayout = Instance.new("UIListLayout")
-    UIListLayout.Padding = UDim.new(0, 8)
-    UIListLayout.Parent = ScrollFrame
+    UIListLayout.Padding = UDim.new(0, 10)
+    UIListLayout.FillDirection = Enum.FillDirection.Vertical
+    UIListLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
+    UIListLayout.Parent = ButtonContainer
     
     local function CreateButton(text, callback, color)
         local btn = Instance.new("TextButton")
-        btn.Size = UDim2.new(1, -10, 0, 35)
+        btn.Size = UDim2.new(1, 0, 0, 45)
         btn.BackgroundColor3 = color or Color3.fromRGB(50, 150, 250)
         btn.Text = text
-        btn.TextColor3 = Color3.new(1, 1, 1)
+        btn.TextColor3 = Color3.fromRGB(255, 255, 255)
         btn.TextSize = 14
-        btn.Font = Enum.Font.Gotham
-        btn.Parent = ScrollFrame
+        btn.Font = Enum.Font.GothamBold
+        btn.AutoButtonColor = true
+        btn.Parent = ButtonContainer
         
         local btnCorner = Instance.new("UICorner")
         btnCorner.CornerRadius = UDim.new(0, 8)
         btnCorner.Parent = btn
         
-        btn.MouseButton1Click:Connect(callback)
+        btn.MouseButton1Click:Connect(function()
+            btn.BackgroundColor3 = Color3.fromRGB(30, 100, 200)
+            wait(0.1)
+            btn.BackgroundColor3 = color or Color3.fromRGB(50, 150, 250)
+            callback()
+        end)
+        
         return btn
     end
     
-    local StatusLabel = Instance.new("TextLabel")
-    StatusLabel.Size = UDim2.new(1, -20, 0, 50)
-    StatusLabel.Position = UDim2.new(0, 10, 1, -60)
-    StatusLabel.BackgroundColor3 = Color3.fromRGB(30, 30, 45)
-    StatusLabel.Text = "Status: Aguardando..."
-    StatusLabel.TextColor3 = Color3.new(1, 1, 1)
-    StatusLabel.TextSize = 12
-    StatusLabel.Font = Enum.Font.Gotham
-    StatusLabel.Parent = Frame
+    local CloseButton = Instance.new("TextButton")
+    CloseButton.Name = "CloseButton"
+    CloseButton.Size = UDim2.new(0, 30, 0, 30)
+    CloseButton.Position = UDim2.new(1, -35, 0, 10)
+    CloseButton.BackgroundColor3 = Color3.fromRGB(200, 50, 50)
+    CloseButton.Text = "X"
+    CloseButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+    CloseButton.TextSize = 18
+    CloseButton.Font = Enum.Font.GothamBold
+    CloseButton.Parent = Frame
     
-    local statusCorner = Instance.new("UICorner")
-    statusCorner.CornerRadius = UDim.new(0, 8)
-    statusCorner.Parent = StatusLabel
+    local CloseCorner = Instance.new("UICorner")
+    CloseCorner.CornerRadius = UDim.new(0, 8)
+    CloseCorner.Parent = CloseButton
+    
+    CloseButton.MouseButton1Click:Connect(function()
+        ScreenGui:Destroy()
+    end)
     
     -- Botões
-    CreateButton("1. ESCANEAR REMOTES", function()
-        StatusLabel.Text = "Escaneando..."
+    CreateButton("1️⃣ ESCANEAR REMOTES", function()
+        StatusLabel.Text = "⏳ Escaneando remotes..."
+        wait(0.1)
         RemoteScanner:ScanAll()
-        StatusLabel.Text = string.format("✓ Encontrados: %d remotes", #RemoteScanner.FoundRemotes)
+        StatusLabel.Text = string.format("✅ Encontrados: %d remotes\nVerifique console (F9)", #RemoteScanner.FoundRemotes)
     end, Color3.fromRGB(70, 130, 250))
     
-    CreateButton("2. TESTAR TODOS OS MÉTODOS", function()
+    CreateButton("2️⃣ TESTAR TODOS OS MÉTODOS", function()
         if #RemoteScanner.FoundRemotes == 0 then
-            StatusLabel.Text = "✗ Execute o scan primeiro!"
+            StatusLabel.Text = "❌ Execute o scan primeiro!"
             return
         end
         
-        StatusLabel.Text = "Testando métodos..."
+        StatusLabel.Text = "⏳ Testando métodos...\nIsso pode demorar..."
+        wait(0.1)
+        
         MethodTester.TestResults = {}
         
         for _, remote in pairs(RemoteScanner.FoundRemotes) do
@@ -583,47 +603,46 @@ local function CreateGUI()
         end
         
         local working = MethodTester:GenerateReport()
-        StatusLabel.Text = string.format("✓ Testes finalizados: %d funcionando", #working)
+        StatusLabel.Text = string.format("✅ Testes finalizados!\n%d métodos funcionando", #working)
     end, Color3.fromRGB(100, 200, 100))
     
-    CreateButton("3. USAR PRIMEIRO MÉTODO QUE FUNCIONOU", function()
+    CreateButton("3️⃣ CONFIGURAR MÉTODO", function()
         local working = MethodTester:GetWorkingMethods()
         if #working == 0 then
-            StatusLabel.Text = "✗ Nenhum método funcionou!"
+            StatusLabel.Text = "❌ Nenhum método funcionou!\nTeste novamente"
             return
         end
         
         FarmSystem:SetWorkingMethod(working[1])
-        StatusLabel.Text = string.format("✓ Método: %s", working[1].MethodName)
+        StatusLabel.Text = string.format("✅ Configurado:\n%s no %s", working[1].MethodName, working[1].RemoteName)
     end, Color3.fromRGB(255, 165, 0))
     
-    CreateButton("4. INICIAR FARM AUTOMÁTICO", function()
+    CreateButton("4️⃣ INICIAR FARM", function()
         if not FarmSystem.WorkingMethod then
-            StatusLabel.Text = "✗ Configure um método primeiro!"
+            StatusLabel.Text = "❌ Configure método primeiro!"
             return
         end
         
         FarmSystem:Start()
-        StatusLabel.Text = "✓ Farm ATIVO"
+        StatusLabel.Text = "✅ FARM ATIVO\nVerifique console (F9)"
     end, Color3.fromRGB(50, 200, 50))
     
-    CreateButton("5. PARAR FARM", function()
+    CreateButton("5️⃣ PARAR FARM", function()
         FarmSystem:Stop()
-        StatusLabel.Text = "✗ Farm PARADO"
+        StatusLabel.Text = "⛔ Farm PARADO"
     end, Color3.fromRGB(255, 100, 100))
     
-    CreateButton("6. VER RELATÓRIO COMPLETO", function()
+    CreateButton("6️⃣ VER RELATÓRIO", function()
         MethodTester:GenerateReport()
-        StatusLabel.Text = "✓ Relatório no console (F9)"
+        StatusLabel.Text = "📊 Relatório gerado!\nAbra console (F9)"
     end, Color3.fromRGB(150, 100, 250))
     
-    CreateButton("7. FECHAR GUI", function()
+    CreateButton("7️⃣ FECHAR GUI", function()
         ScreenGui:Destroy()
     end, Color3.fromRGB(150, 50, 50))
     
-    UIListLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
-        ScrollFrame.CanvasSize = UDim2.new(0, 0, 0, UIListLayout.AbsoluteContentSize.Y + 10)
-    end)
+    ScreenGui.Parent = game.CoreGui
+    print("[GUI] Interface criada com sucesso!")
 end
 
 -- Inicialização
@@ -632,13 +651,18 @@ print([[
 ║       AUTO SEASON PASS XP FARM V2.0 - TESTER         ║
 ║                                                       ║
 ║  Pressione INSERT para abrir GUI                     ║
-║  Este script testa 10 métodos diferentes em cada     ║
-║  RemoteEvent encontrado e identifica qual funciona   ║
+║  Este script testa 10 métodos diferentes             ║
 ╚═══════════════════════════════════════════════════════╝
 ]])
 
-game:GetService("UserInputService").InputBegan:Connect(function(input)
-    if input.KeyCode == Enum.KeyCode.Insert then
+local UserInputService = game:GetService("UserInputService")
+
+UserInputService.InputBegan:Connect(function(input, gameProcessed)
+    if not gameProcessed and input.KeyCode == Enum.KeyCode.Insert then
         CreateGUI()
     end
 end)
+
+-- Auto-criar GUI ao executar
+wait(1)
+CreateGUI()
