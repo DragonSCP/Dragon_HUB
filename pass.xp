@@ -1,0 +1,644 @@
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+
+-- Configurações
+local Config = {
+    AutoFarmXP = true,
+    XPPerAction = 100,
+    FarmInterval = 1,
+    TargetLevel = 100,
+    TestMode = true,
+    CurrentWorkingMethod = nil
+}
+
+-- Utilitários XP
+local XPUtils = {
+    XP_CONSTANT = 100,
+    MAX_LEVEL = 100,
+    
+    CalculateLevel = function(xp)
+        return math.floor(math.sqrt(xp / XPUtils.XP_CONSTANT))
+    end,
+    
+    CalculateXPForLevel = function(level)
+        return XPUtils.XP_CONSTANT * level ^ 2
+    end,
+    
+    GetXPToNextLevel = function(currentXP)
+        local currentLevel = math.floor(math.sqrt(currentXP / XPUtils.XP_CONSTANT))
+        local xpCurrentLevel = XPUtils.XP_CONSTANT * currentLevel ^ 2
+        local xpNextLevel = XPUtils.XP_CONSTANT * (currentLevel + 1) ^ 2
+        return (xpNextLevel - xpCurrentLevel) - (currentXP - xpCurrentLevel)
+    end,
+    
+    GetCurrentLevelProgress = function(currentXP)
+        local currentLevel = math.floor(math.sqrt(currentXP / XPUtils.XP_CONSTANT))
+        local xpCurrentLevel = XPUtils.XP_CONSTANT * currentLevel ^ 2
+        local xpNextLevel = XPUtils.XP_CONSTANT * (currentLevel + 1) ^ 2
+        local xpInLevel = currentXP - xpCurrentLevel
+        local xpNeeded = xpNextLevel - xpCurrentLevel
+        return (xpInLevel / xpNeeded) * 100
+    end,
+    
+    FormatNumber = function(num)
+        if num >= 1e12 then return string.format("%.2fT", num / 1e12)
+        elseif num >= 1e9 then return string.format("%.2fB", num / 1e9)
+        elseif num >= 1e6 then return string.format("%.2fM", num / 1e6)
+        elseif num >= 1e3 then return string.format("%.2fk", num / 1e3)
+        else return tostring(num) end
+    end
+}
+
+-- Sistema de detecção de Remotes
+local RemoteScanner = {
+    FoundRemotes = {},
+    
+    ScanAll = function(self)
+        print("\n[SCANNER] Iniciando varredura de RemoteEvents...")
+        self.FoundRemotes = {}
+        
+        local locations = {
+            ReplicatedStorage,
+            ReplicatedStorage:FindFirstChild("Remotes"),
+            ReplicatedStorage:FindFirstChild("GameEvents"),
+            ReplicatedStorage:FindFirstChild("Events"),
+            ReplicatedStorage:FindFirstChild("Network"),
+            ReplicatedStorage:FindFirstChild("Data"),
+            ReplicatedStorage:FindFirstChild("Networking")
+        }
+        
+        for _, location in pairs(locations) do
+            if location then
+                for _, obj in pairs(location:GetDescendants()) do
+                    if obj:IsA("RemoteEvent") or obj:IsA("RemoteFunction") then
+                        local name = obj.Name:lower()
+                        local path = obj:GetFullName()
+                        
+                        if name:match("season") or name:match("battle") or name:match("pass") or 
+                           name:match("xp") or name:match("exp") or name:match("progress") or
+                           name:match("claim") or name:match("reward") or name:match("level") then
+                            table.insert(self.FoundRemotes, {
+                                Object = obj,
+                                Name = obj.Name,
+                                Path = path,
+                                Type = obj.ClassName
+                            })
+                            print(string.format("[SCANNER] ✓ Encontrado: %s (%s)", obj.Name, obj.ClassName))
+                        end
+                    end
+                end
+            end
+        end
+        
+        print(string.format("[SCANNER] Total encontrado: %d remotes", #self.FoundRemotes))
+        return self.FoundRemotes
+    end,
+    
+    GetRemotesByKeyword = function(self, keyword)
+        local results = {}
+        for _, remote in pairs(self.FoundRemotes) do
+            if remote.Name:lower():match(keyword:lower()) then
+                table.insert(results, remote)
+            end
+        end
+        return results
+    end
+}
+
+-- Sistema de Testes Multi-Método
+local MethodTester = {
+    TestResults = {},
+    CurrentXPBefore = 0,
+    
+    -- MÉTODO 1: FireServer direto com player e quantidade
+    Method1_DirectPlayerQuantity = function(self, remote, xpAmount)
+        local success, err = pcall(function()
+            if remote.Type == "RemoteEvent" then
+                remote.Object:FireServer(LocalPlayer, xpAmount)
+            else
+                remote.Object:InvokeServer(LocalPlayer, xpAmount)
+            end
+        end)
+        return success, err
+    end,
+    
+    -- MÉTODO 2: FireServer com tabela de players
+    Method2_PlayerTable = function(self, remote, xpAmount)
+        local success, err = pcall(function()
+            if remote.Type == "RemoteEvent" then
+                remote.Object:FireServer({LocalPlayer}, xpAmount)
+            else
+                remote.Object:InvokeServer({LocalPlayer}, xpAmount)
+            end
+        end)
+        return success, err
+    end,
+    
+    -- MÉTODO 3: FireServer com comando estruturado
+    Method3_CommandStructure = function(self, remote, xpAmount)
+        local success, err = pcall(function()
+            local cmd = {
+                Name = "progressseasonpass",
+                Args = {
+                    {Type = "players", Name = "to", Value = {LocalPlayer}},
+                    {Type = "integer", Name = "quantity", Value = xpAmount}
+                }
+            }
+            if remote.Type == "RemoteEvent" then
+                remote.Object:FireServer(cmd)
+            else
+                remote.Object:InvokeServer(cmd)
+            end
+        end)
+        return success, err
+    end,
+    
+    -- MÉTODO 4: FireServer com apenas quantidade
+    Method4_OnlyQuantity = function(self, remote, xpAmount)
+        local success, err = pcall(function()
+            if remote.Type == "RemoteEvent" then
+                remote.Object:FireServer(xpAmount)
+            else
+                remote.Object:InvokeServer(xpAmount)
+            end
+        end)
+        return success, err
+    end,
+    
+    -- MÉTODO 5: FireServer com UserId e quantidade
+    Method5_UserIdQuantity = function(self, remote, xpAmount)
+        local success, err = pcall(function()
+            if remote.Type == "RemoteEvent" then
+                remote.Object:FireServer(LocalPlayer.UserId, xpAmount)
+            else
+                remote.Object:InvokeServer(LocalPlayer.UserId, xpAmount)
+            end
+        end)
+        return success, err
+    end,
+    
+    -- MÉTODO 6: FireServer com Name e quantidade
+    Method6_NameQuantity = function(self, remote, xpAmount)
+        local success, err = pcall(function()
+            if remote.Type == "RemoteEvent" then
+                remote.Object:FireServer(LocalPlayer.Name, xpAmount)
+            else
+                remote.Object:InvokeServer(LocalPlayer.Name, xpAmount)
+            end
+        end)
+        return success, err
+    end,
+    
+    -- MÉTODO 7: FireServer com dados estruturados
+    Method7_DataStructure = function(self, remote, xpAmount)
+        local success, err = pcall(function()
+            local data = {
+                Player = LocalPlayer,
+                Amount = xpAmount,
+                Type = "XP"
+            }
+            if remote.Type == "RemoteEvent" then
+                remote.Object:FireServer(data)
+            else
+                remote.Object:InvokeServer(data)
+            end
+        end)
+        return success, err
+    end,
+    
+    -- MÉTODO 8: FireServer com múltiplos argumentos
+    Method8_MultipleArgs = function(self, remote, xpAmount)
+        local success, err = pcall(function()
+            if remote.Type == "RemoteEvent" then
+                remote.Object:FireServer("ProgressSeasonPass", LocalPlayer, xpAmount)
+            else
+                remote.Object:InvokeServer("ProgressSeasonPass", LocalPlayer, xpAmount)
+            end
+        end)
+        return success, err
+    end,
+    
+    -- MÉTODO 9: FireServer com action e params
+    Method9_ActionParams = function(self, remote, xpAmount)
+        local success, err = pcall(function()
+            if remote.Type == "RemoteEvent" then
+                remote.Object:FireServer("AddXP", {player = LocalPlayer, amount = xpAmount})
+            else
+                remote.Object:InvokeServer("AddXP", {player = LocalPlayer, amount = xpAmount})
+            end
+        end)
+        return success, err
+    end,
+    
+    -- MÉTODO 10: FireServer com string de comando
+    Method10_StringCommand = function(self, remote, xpAmount)
+        local success, err = pcall(function()
+            if remote.Type == "RemoteEvent" then
+                remote.Object:FireServer(string.format("progressseasonpass %s %d", LocalPlayer.Name, xpAmount))
+            else
+                remote.Object:InvokeServer(string.format("progressseasonpass %s %d", LocalPlayer.Name, xpAmount))
+            end
+        end)
+        return success, err
+    end,
+    
+    GetCurrentXP = function(self)
+        -- Tenta múltiplas formas de obter XP atual
+        local xp = 0
+        
+        -- Método 1: Atributo direto
+        xp = LocalPlayer:GetAttribute("SeasonPassXP") or 
+             LocalPlayer:GetAttribute("BattlePassXP") or
+             LocalPlayer:GetAttribute("PassXP") or
+             LocalPlayer:GetAttribute("XP")
+        
+        if xp and xp > 0 then return xp end
+        
+        -- Método 2: PlayerData
+        local playerData = ReplicatedStorage:FindFirstChild("PlayerData")
+        if playerData then
+            local data = playerData:FindFirstChild(LocalPlayer.Name)
+            if data then
+                xp = data:GetAttribute("SeasonPassXP") or data:GetAttribute("XP")
+                if xp and xp > 0 then return xp end
+            end
+        end
+        
+        -- Método 3: Character
+        if LocalPlayer.Character then
+            xp = LocalPlayer.Character:GetAttribute("SeasonPassXP") or
+                 LocalPlayer.Character:GetAttribute("XP")
+            if xp and xp > 0 then return xp end
+        end
+        
+        return 0
+    end,
+    
+    TestAllMethods = function(self, remote, xpAmount)
+        local methods = {
+            {Name = "DirectPlayerQuantity", Func = self.Method1_DirectPlayerQuantity},
+            {Name = "PlayerTable", Func = self.Method2_PlayerTable},
+            {Name = "CommandStructure", Func = self.Method3_CommandStructure},
+            {Name = "OnlyQuantity", Func = self.Method4_OnlyQuantity},
+            {Name = "UserIdQuantity", Func = self.Method5_UserIdQuantity},
+            {Name = "NameQuantity", Func = self.Method6_NameQuantity},
+            {Name = "DataStructure", Func = self.Method7_DataStructure},
+            {Name = "MultipleArgs", Func = self.Method8_MultipleArgs},
+            {Name = "ActionParams", Func = self.Method9_ActionParams},
+            {Name = "StringCommand", Func = self.Method10_StringCommand}
+        }
+        
+        print(string.format("\n[TESTER] Testando remote: %s", remote.Name))
+        print(string.format("[TESTER] Path: %s", remote.Path))
+        
+        for i, method in ipairs(methods) do
+            local xpBefore = self:GetCurrentXP()
+            wait(0.3)
+            
+            local success, err = method.Func(self, remote, xpAmount)
+            
+            wait(0.5)
+            local xpAfter = self:GetCurrentXP()
+            local xpGained = xpAfter - xpBefore
+            
+            local result = {
+                RemoteName = remote.Name,
+                RemotePath = remote.Path,
+                MethodName = method.Name,
+                MethodNumber = i,
+                Success = success,
+                Error = err,
+                XPBefore = xpBefore,
+                XPAfter = xpAfter,
+                XPGained = xpGained,
+                Worked = xpGained > 0
+            }
+            
+            table.insert(self.TestResults, result)
+            
+            local status = result.Worked and "✓ FUNCIONOU!" or (success and "✗ Executou mas sem XP" or "✗ Erro")
+            local color = result.Worked and "\27[32m" or (success and "\27[33m" or "\27[31m")
+            
+            print(string.format("%s[MÉTODO %d] %s - %s\27[0m", color, i, method.Name, status))
+            if result.Worked then
+                print(string.format("  → XP Ganho: %s (de %s para %s)", 
+                    XPUtils.FormatNumber(xpGained),
+                    XPUtils.FormatNumber(xpBefore),
+                    XPUtils.FormatNumber(xpAfter)
+                ))
+            end
+            if err then
+                print(string.format("  → Erro: %s", tostring(err)))
+            end
+        end
+    end,
+    
+    GetWorkingMethods = function(self)
+        local working = {}
+        for _, result in pairs(self.TestResults) do
+            if result.Worked then
+                table.insert(working, result)
+            end
+        end
+        return working
+    end,
+    
+    GenerateReport = function(self)
+        print("\n" .. string.rep("=", 60))
+        print("             RELATÓRIO DE TESTES - XP FARM")
+        print(string.rep("=", 60))
+        
+        local working = self:GetWorkingMethods()
+        
+        print(string.format("\n✓ MÉTODOS QUE FUNCIONARAM: %d", #working))
+        if #working > 0 then
+            for i, result in ipairs(working) do
+                print(string.format("\n[%d] %s", i, result.MethodName))
+                print(string.format("    Remote: %s", result.RemoteName))
+                print(string.format("    Path: %s", result.RemotePath))
+                print(string.format("    XP Ganho: %s", XPUtils.FormatNumber(result.XPGained)))
+            end
+        else
+            print("    Nenhum método funcionou :(")
+        end
+        
+        print(string.format("\n✗ Total de testes: %d", #self.TestResults))
+        print(string.format("✓ Taxa de sucesso: %.1f%%", (#working / #self.TestResults) * 100))
+        print(string.rep("=", 60) .. "\n")
+        
+        return working
+    end
+}
+
+-- Sistema de Farm com método identificado
+local FarmSystem = {
+    Active = false,
+    WorkingMethod = nil,
+    WorkingRemote = nil,
+    Stats = {
+        TotalXPGained = 0,
+        FarmCycles = 0,
+        StartTime = 0
+    },
+    
+    SetWorkingMethod = function(self, methodResult)
+        self.WorkingMethod = methodResult
+        self.WorkingRemote = methodResult.RemoteName
+        Config.CurrentWorkingMethod = methodResult.MethodName
+        print(string.format("\n[FARM] Método configurado: %s no remote %s", 
+            methodResult.MethodName, methodResult.RemoteName))
+    end,
+    
+    Start = function(self)
+        if not self.WorkingMethod then
+            print("[FARM] ✗ Nenhum método configurado! Execute os testes primeiro.")
+            return
+        end
+        
+        self.Active = true
+        self.Stats.StartTime = tick()
+        print("[FARM] ✓ Farm iniciado!")
+        
+        spawn(function()
+            while self.Active do
+                local success, err = pcall(function()
+                    self:ExecuteFarm()
+                end)
+                
+                if not success then
+                    warn("[FARM] Erro no ciclo:", err)
+                end
+                
+                wait(Config.FarmInterval)
+            end
+        end)
+    end,
+    
+    Stop = function(self)
+        self.Active = false
+        print("[FARM] Farm parado!")
+        self:ShowStats()
+    end,
+    
+    ExecuteFarm = function(self)
+        local xpBefore = MethodTester:GetCurrentXP()
+        
+        -- Encontra o remote e executa o método
+        local remote = nil
+        for _, r in pairs(RemoteScanner.FoundRemotes) do
+            if r.Name == self.WorkingRemote then
+                remote = r
+                break
+            end
+        end
+        
+        if not remote then
+            warn("[FARM] Remote não encontrado!")
+            return
+        end
+        
+        -- Executa o método que funcionou
+        local methodName = "Method" .. self.WorkingMethod.MethodNumber .. "_" .. self.WorkingMethod.MethodName
+        local method = MethodTester[methodName]
+        
+        if method then
+            method(MethodTester, remote, Config.XPPerAction)
+        end
+        
+        wait(0.3)
+        local xpAfter = MethodTester:GetCurrentXP()
+        local xpGained = xpAfter - xpBefore
+        
+        if xpGained > 0 then
+            self.Stats.TotalXPGained = self.Stats.TotalXPGained + xpGained
+            self.Stats.FarmCycles = self.Stats.FarmCycles + 1
+            
+            local level = XPUtils.CalculateLevel(xpAfter)
+            local progress = XPUtils.GetCurrentLevelProgress(xpAfter)
+            
+            print(string.format("[FARM] +%s XP | Level: %d | Progresso: %.1f%% | Total: %s XP",
+                XPUtils.FormatNumber(xpGained),
+                level,
+                progress,
+                XPUtils.FormatNumber(self.Stats.TotalXPGained)
+            ))
+        end
+    end,
+    
+    ShowStats = function(self)
+        local elapsed = tick() - self.Stats.StartTime
+        local xpPerSecond = self.Stats.TotalXPGained / elapsed
+        
+        print("\n" .. string.rep("=", 60))
+        print("                  ESTATÍSTICAS DO FARM")
+        print(string.rep("=", 60))
+        print(string.format("Tempo decorrido: %.1f segundos", elapsed))
+        print(string.format("Ciclos de farm: %d", self.Stats.FarmCycles))
+        print(string.format("XP total ganho: %s", XPUtils.FormatNumber(self.Stats.TotalXPGained)))
+        print(string.format("XP por segundo: %s", XPUtils.FormatNumber(xpPerSecond)))
+        print(string.rep("=", 60) .. "\n")
+    end
+}
+
+-- GUI Avançada
+local function CreateGUI()
+    local ScreenGui = Instance.new("ScreenGui")
+    ScreenGui.Name = "SeasonPassTesterGUI"
+    ScreenGui.ResetOnSpawn = false
+    ScreenGui.Parent = game.CoreGui
+    
+    local Frame = Instance.new("Frame")
+    Frame.Size = UDim2.new(0, 400, 0, 550)
+    Frame.Position = UDim2.new(0.5, -200, 0.5, -275)
+    Frame.BackgroundColor3 = Color3.fromRGB(20, 20, 30)
+    Frame.BorderSizePixel = 0
+    Frame.Active = true
+    Frame.Draggable = true
+    Frame.Parent = ScreenGui
+    
+    local UICorner = Instance.new("UICorner")
+    UICorner.CornerRadius = UDim.new(0, 12)
+    UICorner.Parent = Frame
+    
+    local Title = Instance.new("TextLabel")
+    Title.Size = UDim2.new(1, 0, 0, 50)
+    Title.BackgroundColor3 = Color3.fromRGB(30, 30, 45)
+    Title.Text = "XP FARM TESTER V2.0"
+    Title.TextColor3 = Color3.new(1, 1, 1)
+    Title.TextSize = 20
+    Title.Font = Enum.Font.GothamBold
+    Title.Parent = Frame
+    
+    local TitleCorner = Instance.new("UICorner")
+    TitleCorner.CornerRadius = UDim.new(0, 12)
+    TitleCorner.Parent = Title
+    
+    local ScrollFrame = Instance.new("ScrollingFrame")
+    ScrollFrame.Size = UDim2.new(1, -20, 1, -120)
+    ScrollFrame.Position = UDim2.new(0, 10, 0, 60)
+    ScrollFrame.BackgroundColor3 = Color3.fromRGB(25, 25, 35)
+    ScrollFrame.BorderSizePixel = 0
+    ScrollFrame.ScrollBarThickness = 6
+    ScrollFrame.Parent = Frame
+    
+    local ScrollCorner = Instance.new("UICorner")
+    ScrollCorner.CornerRadius = UDim.new(0, 8)
+    ScrollCorner.Parent = ScrollFrame
+    
+    local UIListLayout = Instance.new("UIListLayout")
+    UIListLayout.Padding = UDim.new(0, 8)
+    UIListLayout.Parent = ScrollFrame
+    
+    local function CreateButton(text, callback, color)
+        local btn = Instance.new("TextButton")
+        btn.Size = UDim2.new(1, -10, 0, 35)
+        btn.BackgroundColor3 = color or Color3.fromRGB(50, 150, 250)
+        btn.Text = text
+        btn.TextColor3 = Color3.new(1, 1, 1)
+        btn.TextSize = 14
+        btn.Font = Enum.Font.Gotham
+        btn.Parent = ScrollFrame
+        
+        local btnCorner = Instance.new("UICorner")
+        btnCorner.CornerRadius = UDim.new(0, 8)
+        btnCorner.Parent = btn
+        
+        btn.MouseButton1Click:Connect(callback)
+        return btn
+    end
+    
+    local StatusLabel = Instance.new("TextLabel")
+    StatusLabel.Size = UDim2.new(1, -20, 0, 50)
+    StatusLabel.Position = UDim2.new(0, 10, 1, -60)
+    StatusLabel.BackgroundColor3 = Color3.fromRGB(30, 30, 45)
+    StatusLabel.Text = "Status: Aguardando..."
+    StatusLabel.TextColor3 = Color3.new(1, 1, 1)
+    StatusLabel.TextSize = 12
+    StatusLabel.Font = Enum.Font.Gotham
+    StatusLabel.Parent = Frame
+    
+    local statusCorner = Instance.new("UICorner")
+    statusCorner.CornerRadius = UDim.new(0, 8)
+    statusCorner.Parent = StatusLabel
+    
+    -- Botões
+    CreateButton("1. ESCANEAR REMOTES", function()
+        StatusLabel.Text = "Escaneando..."
+        RemoteScanner:ScanAll()
+        StatusLabel.Text = string.format("✓ Encontrados: %d remotes", #RemoteScanner.FoundRemotes)
+    end, Color3.fromRGB(70, 130, 250))
+    
+    CreateButton("2. TESTAR TODOS OS MÉTODOS", function()
+        if #RemoteScanner.FoundRemotes == 0 then
+            StatusLabel.Text = "✗ Execute o scan primeiro!"
+            return
+        end
+        
+        StatusLabel.Text = "Testando métodos..."
+        MethodTester.TestResults = {}
+        
+        for _, remote in pairs(RemoteScanner.FoundRemotes) do
+            MethodTester:TestAllMethods(remote, Config.XPPerAction)
+        end
+        
+        local working = MethodTester:GenerateReport()
+        StatusLabel.Text = string.format("✓ Testes finalizados: %d funcionando", #working)
+    end, Color3.fromRGB(100, 200, 100))
+    
+    CreateButton("3. USAR PRIMEIRO MÉTODO QUE FUNCIONOU", function()
+        local working = MethodTester:GetWorkingMethods()
+        if #working == 0 then
+            StatusLabel.Text = "✗ Nenhum método funcionou!"
+            return
+        end
+        
+        FarmSystem:SetWorkingMethod(working[1])
+        StatusLabel.Text = string.format("✓ Método: %s", working[1].MethodName)
+    end, Color3.fromRGB(255, 165, 0))
+    
+    CreateButton("4. INICIAR FARM AUTOMÁTICO", function()
+        if not FarmSystem.WorkingMethod then
+            StatusLabel.Text = "✗ Configure um método primeiro!"
+            return
+        end
+        
+        FarmSystem:Start()
+        StatusLabel.Text = "✓ Farm ATIVO"
+    end, Color3.fromRGB(50, 200, 50))
+    
+    CreateButton("5. PARAR FARM", function()
+        FarmSystem:Stop()
+        StatusLabel.Text = "✗ Farm PARADO"
+    end, Color3.fromRGB(255, 100, 100))
+    
+    CreateButton("6. VER RELATÓRIO COMPLETO", function()
+        MethodTester:GenerateReport()
+        StatusLabel.Text = "✓ Relatório no console (F9)"
+    end, Color3.fromRGB(150, 100, 250))
+    
+    CreateButton("7. FECHAR GUI", function()
+        ScreenGui:Destroy()
+    end, Color3.fromRGB(150, 50, 50))
+    
+    UIListLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
+        ScrollFrame.CanvasSize = UDim2.new(0, 0, 0, UIListLayout.AbsoluteContentSize.Y + 10)
+    end)
+end
+
+-- Inicialização
+print([[
+╔═══════════════════════════════════════════════════════╗
+║       AUTO SEASON PASS XP FARM V2.0 - TESTER         ║
+║                                                       ║
+║  Pressione INSERT para abrir GUI                     ║
+║  Este script testa 10 métodos diferentes em cada     ║
+║  RemoteEvent encontrado e identifica qual funciona   ║
+╚═══════════════════════════════════════════════════════╝
+]])
+
+game:GetService("UserInputService").InputBegan:Connect(function(input)
+    if input.KeyCode == Enum.KeyCode.Insert then
+        CreateGUI()
+    end
+end)
