@@ -1,26 +1,23 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Players = game:GetService("Players")
 local UserInputService = game:GetService("UserInputService")
+local CoreGui = game:GetService("CoreGui")
 local LocalPlayer = Players.LocalPlayer
 
 -- Configurações
 local Config = {
-    XPPerAction = 1000, -- Quantidade padrão de XP a ser enviada
-    RetryInterval = 1, -- Intervalo entre tentativas (segundos)
+    XPPerAction = 1000, -- Quantidade padrão de XP
+    RetryInterval = 1, -- Intervalo entre tentativas
     MaxRetries = 3, -- Máximo de tentativas por envio
 }
 
 -- Utilitários XP (adaptado de SeasonPassUtils)
 local XPUtils = {
-    XP_CONSTANT = 100, -- Valor padrão, ajustar se SeasonPassStaticData for acessível
+    XP_CONSTANT = 100, -- Valor padrão, ajustar se SeasonPassStaticData acessível
     MAX_LEVEL = 100,
     
     CalculateLevel = function(xp)
         return math.floor(math.sqrt(xp / XPUtils.XP_CONSTANT))
-    end,
-    
-    CalculateXPForLevel = function(level)
-        return XPUtils.XP_CONSTANT * level ^ 2
     end,
     
     GetXPToNextLevel = function(currentXP)
@@ -48,28 +45,83 @@ local XPUtils = {
     end
 }
 
+-- Função para tornar a GUI arrastável (sugestão fornecida)
+local function makeDraggable(frame, handle)
+    handle = handle or frame
+    local dragging, dragInput, dragStart, startPos
+
+    handle.InputBegan:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 then
+            dragging = true
+            dragStart = input.Position
+            startPos = frame.Position
+
+            input.Changed:Connect(function()
+                if input.UserInputState == Enum.UserInputState.End then
+                    dragging = false
+                end
+            end)
+        end
+    end)
+
+    handle.InputChanged:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseMovement then
+            dragInput = input
+        end
+    end)
+
+    UserInputService.InputChanged:Connect(function(input)
+        if input == dragInput and dragging then
+            local delta = input.Position - dragStart
+            frame.Position = UDim2.new(
+                startPos.X.Scale, startPos.X.Offset + delta.X,
+                startPos.Y.Scale, startPos.Y.Offset + delta.Y
+            )
+        end
+    end)
+end
+
 -- Sistema de Envio de XP
 local XPSender = {
-    LocalXP = 0, -- Contador local de XP (atualizado com cada envio bem-sucedido)
+    LocalXP = 0, -- Contador local de XP
     
     GetCurrentXP = function(self)
-        local xp = LocalPlayer:GetAttribute("SeasonPassXP") or 
+        local xp = self.LocalXP
+        local success, result = pcall(function()
+            return LocalPlayer:GetAttribute("SeasonPassXP") or 
                    LocalPlayer:GetAttribute("BattlePassXP") or
                    LocalPlayer:GetAttribute("PassXP") or
                    LocalPlayer:GetAttribute("XP") or
-                   self.LocalXP
-        
-        local playerData = ReplicatedStorage:FindFirstChild("PlayerData")
-        if playerData then
-            local data = playerData:FindFirstChild(LocalPlayer.Name)
-            if data then
-                xp = data:GetAttribute("SeasonPassXP") or data:GetAttribute("XP") or xp
-            end
+                   xp
+        end)
+        if success and result > 0 then
+            xp = result
         end
         
-        if LocalPlayer.Character then
-            xp = LocalPlayer.Character:GetAttribute("SeasonPassXP") or
-                 LocalPlayer.Character:GetAttribute("XP") or xp
+        success, result = pcall(function()
+            local playerData = ReplicatedStorage:FindFirstChild("PlayerData")
+            if playerData then
+                local data = playerData:FindFirstChild(LocalPlayer.Name)
+                if data then
+                    return data:GetAttribute("SeasonPassXP") or data:GetAttribute("XP") or xp
+                end
+            end
+            return xp
+        end)
+        if success and result > 0 then
+            xp = result
+        end
+        
+        success, result = pcall(function()
+            if LocalPlayer.Character then
+                return LocalPlayer.Character:GetAttribute("SeasonPassXP") or
+                       LocalPlayer.Character:GetAttribute("XP") or
+                       xp
+            end
+            return xp
+        end)
+        if success and result > 0 then
+            xp = result
         end
         
         return xp
@@ -80,17 +132,17 @@ local XPSender = {
         local success = false
         local errorMsg = nil
         
-        -- Possíveis remotes a tentar
         local possibleRemotes = {
             {Path = "GameEvents.SeasonPass.ProgressSeasonPass", Type = "RemoteEvent"},
             {Path = "GameEvents.GiveExp", Type = "RemoteEvent"},
             {Path = "GameEvents.XP", Type = "RemoteEvent"},
             {Path = "GameEvents.Exp", Type = "RemoteEvent"},
             {Path = "Events.ProgressSeasonPass", Type = "RemoteEvent"},
-            {Path = "Events.GiveExp", Type = "RemoteEvent"}
+            {Path = "Events.GiveExp", Type = "RemoteEvent"},
+            {Path = "Remotes.ProgressSeasonPass", Type = "RemoteEvent"},
+            {Path = "Remotes.GiveExp", Type = "RemoteEvent"}
         }
         
-        -- Estruturas de comando
         local commands = {
             {
                 Name = "progressseasonpass",
@@ -106,24 +158,29 @@ local XPSender = {
                     {Type = "integer", Name = "quantity", Value = xpAmount}
                 }
             },
-            { -- Método simples: apenas quantidade
-                Args = {xpAmount}
-            },
-            { -- Método com player e quantidade
-                Args = {LocalPlayer, xpAmount}
-            }
+            {Args = {xpAmount}},
+            {Args = {LocalPlayer, xpAmount}}
         }
         
         for _, remoteInfo in ipairs(possibleRemotes) do
             local remote = nil
-            local pathParts = string.split(remoteInfo.Path, ".")
-            local current = ReplicatedStorage
-            for _, part in ipairs(pathParts) do
-                current = current:FindFirstChild(part)
-                if not current then break end
-            end
-            if current and (current:IsA("RemoteEvent") or current:IsA("RemoteFunction")) then
-                remote = {Object = current, Type = current.ClassName}
+            local success, result = pcall(function()
+                local pathParts = string.split(remoteInfo.Path, ".")
+                local current = ReplicatedStorage
+                for _, part in ipairs(pathParts) do
+                    current = current:FindFirstChild(part)
+                    if not current then return nil end
+                end
+                if current and (current:IsA("RemoteEvent") or current:IsA("RemoteFunction")) then
+                    return {Object = current, Type = current.ClassName}
+                end
+                return nil
+            end)
+            
+            if success and result then
+                remote = result
+            else
+                print(string.format("[XP] Remote %s não encontrado", remoteInfo.Path))
             end
             
             if remote then
@@ -147,7 +204,7 @@ local XPSender = {
                         end
                     end)
                     
-                    wait(0.5) -- Aguardar resposta do servidor
+                    wait(0.5)
                     local xpAfter = self:GetCurrentXP()
                     local xpGained = xpAfter - xpBefore
                     
@@ -180,218 +237,222 @@ local XPSender = {
 
 -- GUI para Interação
 local function CreateGUI()
-    if game.CoreGui:FindFirstChild("SeasonPassXPGUI") then
-        game.CoreGui.SeasonPassXPGUI:Destroy()
-    end
-    
-    local ScreenGui = Instance.new("ScreenGui")
-    ScreenGui.Name = "SeasonPassXPGUI"
-    ScreenGui.ResetOnSpawn = false
-    ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
-    
-    local Frame = Instance.new("Frame")
-    Frame.Name = "MainFrame"
-    Frame.Size = UDim2.new(0, 350, 0, 450)
-    Frame.Position = UDim2.new(0.5, -175, 0.5, -225)
-    Frame.BackgroundColor3 = Color3.fromRGB(20, 20, 30)
-    Frame.BorderSizePixel = 2
-    Frame.BorderColor3 = Color3.fromRGB(60, 60, 80)
-    Frame.Active = true
-    Frame.Draggable = true
-    Frame.Parent = ScreenGui
-    
-    local UICorner = Instance.new("UICorner")
-    UICorner.CornerRadius = UDim.new(0, 12)
-    UICorner.Parent = Frame
-    
-    local Title = Instance.new("TextLabel")
-    Title.Name = "Title"
-    Title.Size = UDim2.new(1, 0, 0, 50)
-    Title.Position = UDim2.new(0, 0, 0, 0)
-    Title.BackgroundColor3 = Color3.fromRGB(30, 30, 45)
-    Title.Text = "🔥 SEASON PASS XP V1.0"
-    Title.TextColor3 = Color3.fromRGB(255, 255, 255)
-    Title.TextSize = 20
-    Title.Font = Enum.Font.GothamBold
-    Title.Parent = Frame
-    
-    local TitleCorner = Instance.new("UICorner")
-    TitleCorner.CornerRadius = UDim.new(0, 12)
-    TitleCorner.Parent = Title
-    
-    local StatusLabel = Instance.new("TextLabel")
-    StatusLabel.Name = "StatusLabel"
-    StatusLabel.Size = UDim2.new(1, -20, 0, 100)
-    StatusLabel.Position = UDim2.new(0, 10, 0, 60)
-    StatusLabel.BackgroundColor3 = Color3.fromRGB(25, 25, 35)
-    StatusLabel.Text = string.format("Status: Aguardando...\nLevel: %d\nProgresso: %.1f%%", 
-        XPUtils.CalculateLevel(XPSender:GetCurrentXP()), 
-        XPUtils.GetCurrentLevelProgress(XPSender:GetCurrentXP()))
-    StatusLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-    StatusLabel.TextSize = 14
-    StatusLabel.Font = Enum.Font.Gotham
-    StatusLabel.TextWrapped = true
-    StatusLabel.TextYAlignment = Enum.TextYAlignment.Top
-    StatusLabel.Parent = Frame
-    
-    local StatusCorner = Instance.new("UICorner")
-    StatusCorner.CornerRadius = UDim.new(0, 8)
-    StatusCorner.Parent = StatusLabel
-    
-    local XPInput = Instance.new("TextBox")
-    XPInput.Name = "XPInput"
-    XPInput.Size = UDim2.new(1, -20, 0, 40)
-    XPInput.Position = UDim2.new(0, 10, 0, 170)
-    XPInput.BackgroundColor3 = Color3.fromRGB(25, 25, 35)
-    XPInput.Text = tostring(Config.XPPerAction)
-    XPInput.TextColor3 = Color3.fromRGB(255, 255, 255)
-    XPInput.TextSize = 14
-    XPInput.Font = Enum.Font.Gotham
-    XPInput.PlaceholderText = "Digite a quantidade de XP"
-    XPInput.Parent = Frame
-    
-    local XPInputCorner = Instance.new("UICorner")
-    XPInputCorner.CornerRadius = UDim.new(0, 8)
-    XPInputCorner.Parent = XPInput
-    
-    local LogFrame = Instance.new("ScrollingFrame")
-    LogFrame.Name = "LogFrame"
-    LogFrame.Size = UDim2.new(1, -20, 0, 150)
-    LogFrame.Position = UDim2.new(0, 10, 0, 220)
-    LogFrame.BackgroundColor3 = Color3.fromRGB(25, 25, 35)
-    LogFrame.BorderSizePixel = 0
-    LogFrame.ScrollBarThickness = 8
-    LogFrame.CanvasSize = UDim2.new(0, 0, 0, 0)
-    LogFrame.Parent = Frame
-    
-    local LogListLayout = Instance.new("UIListLayout")
-    LogListLayout.Padding = UDim.new(0, 5)
-    LogListLayout.SortOrder = Enum.SortOrder.LayoutOrder
-    LogListLayout.Parent = LogFrame
-    
-    local function AddLog(message, color)
-        local log = Instance.new("TextLabel")
-        log.Size = UDim2.new(1, -10, 0, 20)
-        log.BackgroundTransparency = 1
-        log.Text = message
-        log.TextColor3 = color or Color3.fromRGB(255, 255, 255)
-        log.TextSize = 12
-        log.Font = Enum.Font.Gotham
-        log.TextXAlignment = Enum.TextXAlignment.Left
-        log.Parent = LogFrame
-        LogFrame.CanvasSize = UDim2.new(0, 0, 0, LogListLayout.AbsoluteContentSize.Y)
-        if #LogFrame:GetChildren() > 50 then
-            LogFrame:GetChildren()[1]:Destroy()
+    local success, err = pcall(function()
+        if CoreGui:FindFirstChild("SeasonPassXPGUI") then
+            CoreGui.SeasonPassXPGUI:Destroy()
         end
-    end
-    
-    local SendXPButton
-    local function CreateButton(text, callback, color)
-        SendXPButton = Instance.new("TextButton")
-        SendXPButton.Size = UDim2.new(1, -20, 0, 45)
-        SendXPButton.Position = UDim2.new(0, 10, 1, -55)
-        SendXPButton.BackgroundColor3 = color or Color3.fromRGB(50, 200, 50)
-        SendXPButton.Text = text
-        SendXPButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-        SendXPButton.TextSize = 14
-        SendXPButton.Font = Enum.Font.GothamBold
-        SendXPButton.AutoButtonColor = true
-        SendXPButton.Parent = Frame
         
-        local btnCorner = Instance.new("UICorner")
-        btnCorner.CornerRadius = UDim.new(0, 8)
-        btnCorner.Parent = SendXPButton
+        local ScreenGui = Instance.new("ScreenGui")
+        ScreenGui.Name = "SeasonPassXPGUI"
+        ScreenGui.ResetOnSpawn = false
+        ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
         
-        SendXPButton.MouseButton1Click:Connect(function()
-            SendXPButton.BackgroundColor3 = Color3.fromRGB(30, 100, 200)
-            wait(0.1)
+        local Frame = Instance.new("Frame")
+        Frame.Name = "MainFrame"
+        Frame.Size = UDim2.new(0, 350, 0, 450)
+        Frame.Position = UDim2.new(0.5, -175, 0.5, -225)
+        Frame.BackgroundColor3 = Color3.fromRGB(20, 20, 30)
+        Frame.BorderSizePixel = 2
+        Frame.BorderColor3 = Color3.fromRGB(60, 60, 80)
+        Frame.Parent = ScreenGui
+        
+        makeDraggable(Frame, Frame) -- Tornar arrastável pelo título
+        
+        local UICorner = Instance.new("UICorner")
+        UICorner.CornerRadius = UDim.new(0, 12)
+        UICorner.Parent = Frame
+        
+        local Title = Instance.new("TextLabel")
+        Title.Name = "Title"
+        Title.Size = UDim2.new(1, 0, 0, 50)
+        Title.Position = UDim2.new(0, 0, 0, 0)
+        Title.BackgroundColor3 = Color3.fromRGB(30, 30, 45)
+        Title.Text = "🔥 SEASON PASS XP V1.2"
+        Title.TextColor3 = Color3.fromRGB(255, 255, 255)
+        Title.TextSize = 20
+        Title.Font = Enum.Font.GothamBold
+        Title.Parent = Frame
+        
+        local TitleCorner = Instance.new("UICorner")
+        TitleCorner.CornerRadius = UDim.new(0, 12)
+        TitleCorner.Parent = Title
+        
+        local StatusLabel = Instance.new("TextLabel")
+        StatusLabel.Name = "StatusLabel"
+        StatusLabel.Size = UDim2.new(1, -20, 0, 100)
+        StatusLabel.Position = UDim2.new(0, 10, 0, 60)
+        StatusLabel.BackgroundColor3 = Color3.fromRGB(25, 25, 35)
+        StatusLabel.Text = string.format("Status: Aguardando...\nLevel: %d\nProgresso: %.1f%%", 
+            XPUtils.CalculateLevel(XPSender:GetCurrentXP()), 
+            XPUtils.GetCurrentLevelProgress(XPSender:GetCurrentXP()))
+        StatusLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+        StatusLabel.TextSize = 14
+        StatusLabel.Font = Enum.Font.Gotham
+        StatusLabel.TextWrapped = true
+        StatusLabel.TextYAlignment = Enum.TextYAlignment.Top
+        StatusLabel.Parent = Frame
+        
+        local StatusCorner = Instance.new("UICorner")
+        StatusCorner.CornerRadius = UDim.new(0, 8)
+        StatusCorner.Parent = StatusLabel
+        
+        local XPInput = Instance.new("TextBox")
+        XPInput.Name = "XPInput"
+        XPInput.Size = UDim2.new(1, -20, 0, 40)
+        XPInput.Position = UDim2.new(0, 10, 0, 170)
+        XPInput.BackgroundColor3 = Color3.fromRGB(25, 25, 35)
+        XPInput.Text = tostring(Config.XPPerAction)
+        XPInput.TextColor3 = Color3.fromRGB(255, 255, 255)
+        XPInput.TextSize = 14
+        XPInput.Font = Enum.Font.Gotham
+        XPInput.PlaceholderText = "Digite a quantidade de XP"
+        XPInput.Parent = Frame
+        
+        local XPInputCorner = Instance.new("UICorner")
+        XPInputCorner.CornerRadius = UDim.new(0, 8)
+        XPInputCorner.Parent = XPInput
+        
+        local LogFrame = Instance.new("ScrollingFrame")
+        LogFrame.Name = "LogFrame"
+        LogFrame.Size = UDim2.new(1, -20, 0, 150)
+        LogFrame.Position = UDim2.new(0, 10, 0, 220)
+        LogFrame.BackgroundColor3 = Color3.fromRGB(25, 25, 35)
+        LogFrame.BorderSizePixel = 0
+        LogFrame.ScrollBarThickness = 8
+        LogFrame.CanvasSize = UDim2.new(0, 0, 0, 0)
+        LogFrame.Parent = Frame
+        
+        local LogListLayout = Instance.new("UIListLayout")
+        LogListLayout.Padding = UDim.new(0, 5)
+        LogListLayout.SortOrder = Enum.SortOrder.LayoutOrder
+        LogListLayout.Parent = LogFrame
+        
+        local function AddLog(message, color)
+            local success, err = pcall(function()
+                local log = Instance.new("TextLabel")
+                log.Size = UDim2.new(1, -10, 0, 20)
+                log.BackgroundTransparency = 1
+                log.Text = message
+                log.TextColor3 = color or Color3.fromRGB(255, 255, 255)
+                log.TextSize = 12
+                log.Font = Enum.Font.Gotham
+                log.TextXAlignment = Enum.TextXAlignment.Left
+                log.Parent = LogFrame
+                LogFrame.CanvasSize = UDim2.new(0, 0, 0, LogListLayout.AbsoluteContentSize.Y)
+                if #LogFrame:GetChildren() > 50 then
+                    LogFrame:GetChildren()[1]:Destroy()
+                end
+            end)
+            if not success then
+                print("[LOG] Falha ao adicionar log na GUI: " .. tostring(err))
+            end
+        end
+        
+        local SendXPButton
+        local function CreateButton(text, callback, color)
+            SendXPButton = Instance.new("TextButton")
+            SendXPButton.Size = UDim2.new(1, -20, 0, 45)
+            SendXPButton.Position = UDim2.new(0, 10, 1, -55)
             SendXPButton.BackgroundColor3 = color or Color3.fromRGB(50, 200, 50)
-            callback()
+            SendXPButton.Text = text
+            SendXPButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+            SendXPButton.TextSize = 14
+            SendXPButton.Font = Enum.Font.GothamBold
+            SendXPButton.AutoButtonColor = true
+            SendXPButton.Parent = Frame
+            
+            local btnCorner = Instance.new("UICorner")
+            btnCorner.CornerRadius = UDim.new(0, 8)
+            btnCorner.Parent = SendXPButton
+            
+            SendXPButton.MouseButton1Click:Connect(function()
+                SendXPButton.BackgroundColor3 = Color3.fromRGB(30, 100, 200)
+                wait(0.1)
+                SendXPButton.BackgroundColor3 = color or Color3.fromRGB(50, 200, 50)
+                callback()
+            end)
+            
+            return SendXPButton
+        end
+        
+        local CloseButton = Instance.new("TextButton")
+        CloseButton.Name = "CloseButton"
+        CloseButton.Size = UDim2.new(0, 30, 0, 30)
+        CloseButton.Position = UDim2.new(1, -35, 0, 10)
+        CloseButton.BackgroundColor3 = Color3.fromRGB(200, 50, 50)
+        CloseButton.Text = "X"
+        CloseButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+        CloseButton.TextSize = 18
+        CloseButton.Font = Enum.Font.GothamBold
+        CloseButton.Parent = Frame
+        
+        local CloseCorner = Instance.new("UICorner")
+        CloseCorner.CornerRadius = UDim.new(0, 8)
+        CloseCorner.Parent = CloseButton
+        
+        CloseButton.MouseButton1Click:Connect(function()
+            ScreenGui:Destroy()
         end)
         
-        return SendXPButton
-    end
-    
-    local CloseButton = Instance.new("TextButton")
-    CloseButton.Name = "CloseButton"
-    CloseButton.Size = UDim2.new(0, 30, 0, 30)
-    CloseButton.Position = UDim2.new(1, -35, 0, 10)
-    CloseButton.BackgroundColor3 = Color3.fromRGB(200, 50, 50)
-    CloseButton.Text = "X"
-    CloseButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-    CloseButton.TextSize = 18
-    CloseButton.Font = Enum.Font.GothamBold
-    CloseButton.Parent = Frame
-    
-    local CloseCorner = Instance.new("UICorner")
-    CloseCorner.CornerRadius = UDim.new(0, 8)
-    CloseCorner.Parent = CloseButton
-    
-    CloseButton.MouseButton1Click:Connect(function()
-        ScreenGui:Destroy()
+        CreateButton("📈 ENVIAR XP", function()
+            local xpAmount = tonumber(XPInput.Text) or Config.XPPerAction
+            if xpAmount <= 0 then
+                StatusLabel.Text = "❌ Quantidade de XP inválida!"
+                AddLog("Quantidade de XP inválida!", Color3.fromRGB(255, 100, 100))
+                return
+            end
+            
+            StatusLabel.Text = string.format("⏳ Enviando %s XP...", XPUtils.FormatNumber(xpAmount))
+            AddLog(string.format("Enviando %s XP...", XPUtils.FormatNumber(xpAmount)), Color3.fromRGB(100, 150, 255))
+            
+            local success, result = XPSender:SendXP(xpAmount)
+            if success then
+                local currentXP = XPSender:GetCurrentXP()
+                local level = XPUtils.CalculateLevel(currentXP)
+                local progress = XPUtils.GetCurrentLevelProgress(currentXP)
+                StatusLabel.Text = string.format("✅ Sucesso! +%s XP\nLevel: %d\nProgresso: %.1f%%", 
+                    XPUtils.FormatNumber(result), level, progress)
+                AddLog(string.format("Sucesso! +%s XP", XPUtils.FormatNumber(result)), Color3.fromRGB(100, 255, 100))
+            else
+                StatusLabel.Text = string.format("❌ Falha ao enviar XP: %s", tostring(result))
+                AddLog(string.format("Falha: %s", tostring(result)), Color3.fromRGB(255, 100, 100))
+            end
+        end, Color3.fromRGB(50, 200, 50))
+        
+        -- Tentar CoreGui, com fallback para PlayerGui
+        local successParent, errParent = pcall(function()
+            ScreenGui.Parent = CoreGui
+        end)
+        if not successParent then
+            print("[GUI] Falha ao definir CoreGui como pai: " .. tostring(errParent))
+            successParent, errParent = pcall(function()
+                ScreenGui.Parent = LocalPlayer.PlayerGui
+            end)
+            if not successParent then
+                print("[GUI] Falha ao definir PlayerGui como pai: " .. tostring(errParent))
+            else
+                print("[GUI] Interface criada em PlayerGui com sucesso!")
+            end
+        else
+            print("[GUI] Interface criada em CoreGui com sucesso!")
+        end
+        
+        AddLog("Interface iniciada!", Color3.fromRGB(100, 150, 255))
     end)
     
-    -- Botão para enviar XP
-    CreateButton("📈 ENVIAR XP", function()
-        local xpAmount = tonumber(XPInput.Text) or Config.XPPerAction
-        if xpAmount <= 0 then
-            StatusLabel.Text = "❌ Quantidade de XP inválida!"
-            AddLog("Quantidade de XP inválida!", Color3.fromRGB(255, 100, 100))
-            return
-        end
-        
-        StatusLabel.Text = string.format("⏳ Enviando %s XP...", XPUtils.FormatNumber(xpAmount))
-        AddLog(string.format("Enviando %s XP...", XPUtils.FormatNumber(xpAmount)), Color3.fromRGB(100, 150, 255))
-        
-        local success, result = XPSender:SendXP(xpAmount)
-        if success then
-            local currentXP = XPSender:GetCurrentXP()
-            local level = XPUtils.CalculateLevel(currentXP)
-            local progress = XPUtils.GetCurrentLevelProgress(currentXP)
-            StatusLabel.Text = string.format("✅ Sucesso! +%s XP\nLevel: %d\nProgresso: %.1f%%", 
-                XPUtils.FormatNumber(result), level, progress)
-            AddLog(string.format("Sucesso! +%s XP", XPUtils.FormatNumber(result)), Color3.fromRGB(100, 255, 100))
-        else
-            StatusLabel.Text = string.format("❌ Falha ao enviar XP: %s", tostring(result))
-            AddLog(string.format("Falha: %s", tostring(result)), Color3.fromRGB(255, 100, 100))
-        end
-    end, Color3.fromRGB(50, 200, 50))
-    
-    ScreenGui.Parent = game.CoreGui
-    print("[GUI] Interface criada com sucesso!")
-    AddLog("Interface iniciada!", Color3.fromRGB(100, 150, 255))
-end
-
--- Redirecionar prints para a GUI
-local oldPrint = print
-print = function(...)
-    oldPrint(...)
-    local message = table.concat({...}, " ")
-    if game.CoreGui:FindFirstChild("SeasonPassXPGUI") then
-        local logFrame = game.CoreGui.SeasonPassXPGUI.MainFrame.LogFrame
-        local log = Instance.new("TextLabel")
-        log.Size = UDim2.new(1, -10, 0, 20)
-        log.BackgroundTransparency = 1
-        log.Text = message
-        log.TextColor3 = Color3.fromRGB(255, 255, 255)
-        log.TextSize = 12
-        log.Font = Enum.Font.Gotham
-        log.TextXAlignment = Enum.TextXAlignment.Left
-        log.Parent = logFrame
-        logFrame.CanvasSize = UDim2.new(0, 0, 0, logFrame.UIListLayout.AbsoluteContentSize.Y)
-        if #logFrame:GetChildren() > 50 then
-            logFrame:GetChildren()[1]:Destroy()
-        end
+    if not success then
+        print("[GUI] Falha ao criar interface: " .. tostring(err))
     end
 end
 
 -- Inicialização
 print([[
 ╔═══════════════════════════════════════════════════════╗
-║       SEASON PASS XP GRANT V1.0                      ║
+║       SEASON PASS XP GRANT V1.2                      ║
 ║                                                       ║
 ║  Pressione INSERT para abrir GUI                     ║
 ║  Use o botão ENVIAR XP para conceder XP ao passe     ║
+║  Verifique console (F9) para logs detalhados         ║
 ╚═══════════════════════════════════════════════════════╝
 ]])
 
@@ -400,6 +461,3 @@ UserInputService.InputBegan:Connect(function(input, gameProcessed)
         CreateGUI()
     end
 end)
-
-wait(1)
-CreateGUI()
